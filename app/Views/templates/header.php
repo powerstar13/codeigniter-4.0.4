@@ -6,4 +6,4 @@
     <title>CodeIgniter Tutorial</title>
 </head>
 <body>
-    <h1><?php esc($title); ?></h1>
+    <h1><?php echo(esc($title)); ?></h1>
