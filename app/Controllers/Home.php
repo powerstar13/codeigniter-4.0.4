@@ -33,9 +33,10 @@ class Home extends BaseController
     public function world()
     {
         // View에게 전달할 데이터를 객체로 구성하여 전달한다.
-        $data = new stdClass();
+        $data = new \stdClass();
         $data->name = 'Codeigniter';
         $data->version = '4.0.4';
+        $data = get_object_vars($data); // view는 연관배열만 받는다.
         return view('home/world', $data);
     }
 }
