@@ -20,7 +20,7 @@ $routes->setDefaultController('Home');
 $routes->setDefaultMethod('index');
 $routes->setTranslateURIDashes(false);
 $routes->set404Override();
-$routes->setAutoRoute(true);
+$routes->setAutoRoute(false); // 자동 라우팅을 비활성화하여 정의한 경로만 액세스 할 수 있다.
 
 /**
  * --------------------------------------------------------------------
@@ -30,7 +30,11 @@ $routes->setAutoRoute(true);
 
 // We get a performance increase by specifying the default
 // route since we don't have to scan directories.
-$routes->get('/', 'Home::index');
+$routes->get('/', 'Home::index'); // 이 지시문은 지정되지 않은 요청에 대해 Home 컨트롤러 내의 index() 메소드로 처리하라는 것
+// CodeIgniter는 라우팅 규칙을 위에서 아래로 읽고, 요청과 첫 번째로 일치하는 규칙으로 라우팅합니다.
+// 각 규칙은 오른쪽의 슬래시로 구분된 컨트롤러와 메소드 이름에 매핑된 왼족의 정규식입니다.
+$routes->get('(:any)', 'Pages::view/$1');
+
 
 /**
  * --------------------------------------------------------------------
