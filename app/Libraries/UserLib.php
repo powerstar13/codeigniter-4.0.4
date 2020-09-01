@@ -123,4 +123,91 @@ class UserLib
         $deletedUsers = $this->userModel->onlyDeleted()->findAll();
         return $deletedUsers;
     }
+
+    /**
+     * ========================================
+     * 데이터 저장
+     * ========================================
+     */
+
+    /**
+     * 전달된 데이터의 연관 배열을 이용하여 데이터베이스에 새로운 데이터 행을 작성한다.
+     * - 배열의 키는 `$table`의 열(column) 이름과 일치해야 하며, 배열의 값은 해당 키에 저장할 값이다.
+     *
+     * @param array $resource : 저장할 데이터
+     * @return void
+     */
+    public function insert($resource = array())
+    {
+        $data = [
+            'username' => $resource['username'],
+            'email' => $resource['email']
+        ];
+
+        $this->userModel->insert($data);
+    }
+
+    /**
+     * 데이터베이스의 기본 레코드를 업데이트한다.
+     * - update()
+     *     - 첫 번째 매개 변수는 업데이트할 레코드의 `$primaryKey`이다.
+     *     - 두 번째 매개 변수는 이 메소드에 전달될 데이터의 연관 배열이다.
+     * - 배열의 키는 `$table`의 열(column) 이름과 일치해야 하며, 배열의 값은 해당 키에 저장할 값이다.
+     *
+     * @param array $resource
+     * @return void
+     */
+    public function update($resource = array())
+    {
+        $data = [
+            'username' => $resource['username'],
+            'email' => $resource['email']
+        ];
+
+        $this->userModel->update($resource['id'], $data);
+
+        // 기본키(primary) 배열을 첫 번째 매개 변수로 전달하여, 한 번의 호출로 여러 레코드를 업데이트 할 수 있다.
+        $data = [
+            'active' => 1
+        ];
+
+        $this->userModel->update([1, 2, 3], $data);
+
+        // 유효성 검사, 이벤트 등의 추가 이점을 갖는 쿼리 빌더의 업데이트 명령을 수행하려면, 매개 변수를 비운채 사용
+        $this->userModel->whereIn('id', [1, 2, 3])->set($data)->update();
+    }
+
+    /**
+     * `$primaryKey` 값과 일치하는 배열 키가 존재하는지의 여부에 따라 레코드 INSERT 또는 UPDATE를 자동으로 처리한다.
+     *
+     * @return void
+     */
+    public function save($resource = array())
+    {
+        // insert로 작동
+        $data = [
+            'username' => $resource['username'],
+            'email' => $resource['email']
+        ];
+
+        $this->userModel->save($data);
+
+        // update로 작동($primaryKey = 'id'에 매칭될 경우)
+        $data = [
+            'id' => $resource['id'],
+            'username' => $resource['username'],
+            'email' => $resource['email']
+        ];
+
+        $this->userModel->save($data);
+
+        /**
+         * save 메소드는 단순하지 않은 오브젝트를 인식하고 공용 및 보호된 값을 배열로 가져와서 적절한 insert 또는 update 메소드를 전달하여 사용자 정의 클래스 결과 오브젝트에 대한 작업을 훨씬 간단하게 만들 수 있다.
+         * 이를 통해 매우 깨끗한 방식으로 Entity 클래스를 사용할 수 있다.
+         * 엔티티 클래스는 사용자, 블로그 게시물, 작업 등과 같은 개체 유형의 단일 인스턴스를 나타내는 간단한 클래스이다.
+         * 이 클래스는 특정 방식으로 요소를 형식화하는 등 오브젝트 자체를 둘러싼 비즈니스 로직을 유지 보수한다.
+         * 데이터베이스에 저장되는 방법에 대해 전혀 알지 못한다.
+         * 간단하게 다음과 같이 보일 수 있다.
+         */
+    }
 }
