@@ -42,7 +42,7 @@ class Validation
      */
     public $signup = [
         'username'     => 'required|alpha_numeric_space|min_length[3]',
-        'email'        => 'required|valid_email|is_unique[users.email]',
+        'email'        => 'required|valid_email|is_unique[users.email, id, {id}]',
         'password'     => 'required|min_length[8]',
         'pass_confirm' => 'required_with[password]|matches[password]',
     ];
@@ -76,7 +76,7 @@ class Validation
             ]
         ],
         'email' => [
-            'rules' => 'required|valid_email|is_unique[users.email]',
+            'rules' => 'required|valid_email|is_unique[users.email, id, {id}]',
             'errors' => [
                 'required' => 'We really need your email.',
                 'valid_email' => 'Please check the Email field. It does not appear to be valid.',

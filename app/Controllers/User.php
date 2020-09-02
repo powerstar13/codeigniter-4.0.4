@@ -5,7 +5,7 @@ use App\Libraries\UserLib;
 
 Class User extends Controller
 {
-    protected $userLib;
+    private $userLib;
 
     public function __construct()
     {

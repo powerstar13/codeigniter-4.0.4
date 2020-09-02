@@ -5,21 +5,26 @@ use CodeIgniter\Model;
 class UserModel extends Model
 {
     /**
+     * =============================================
      * 1. 데이터베이스 연결
+     *
      * - 클래스가 처음 인스턴스화될 때 데이터베이스 연결 인스턴스가 생성자에 전달되지 않으면 구성에서 설정한대로 기본 데이터베이스 그룹에 자동으로 연결된다.
      * - `DBGroup` 속석을 클래스에 추가하여 모델별로 사용되는 그룹을 수정할 수 있다.
      * - 이는 모델 내에서 `$this->db`에 대한 참조가 적절한 DB에 연결되도록 한다.
+     * =============================================
      */
 
     // "group_name"을 데이터베이스 구성 파일에 정의된 데이터베이스 그룹 이름으로 바꾸십시오.
     protected $DBGroup = 'development';
 
-    // --------------------------------------
 
     /**
+     * =============================================
      * 2. 모델 구성
+     *
      * - 모델 클래스에는 클래스의 메소드가 원활하게 작동하도록 설정할 수 있는 몇 가지 구성 옵션이 있다.
      * - 처음 두 개는 모든 CRUD 메소드에서 사용할 테이블과 필요한 레코드를 찾는 방법을 결정하는데 사용된다.
+     * =============================================
      */
 
     // 모델을 통하여 조작하고자 하는 데이터베이스 테이블을 지정한다.
@@ -71,7 +76,7 @@ class UserModel extends Model
     // 규칙을 저장하는 방법과 같이 유효성 검사 규칙 배열을 포함하거나 유효성 검사 그룹(Validation.php에서 사용자 정의함)의 이름을 포함하는 문자열을 포함한다.
     protected $validationRules = [
         'username'     => 'required|alpha_numeric_space|min_length[3]',
-        'email'        => 'required|valid_email|is_unique[users.email]',
+        'email'        => 'required|valid_email|is_unique[users.email, id, {id}]',
         'password'     => 'required|min_length[8]',
         'pass_confirm' => 'required_with[password]|matches[password]',
     ];
@@ -95,4 +100,60 @@ class UserModel extends Model
     // 그 외 $beforeInsert $afterInsert $beforeUpdate $afterUpdate $afterFind $afterDelete 이 속성들은 콜백 메소드를 지정할 때 사용되며, 콜백은 속성 이름이 뜻하는 시점에 호출된다.
     // 위에서 정의한 콜백을 사용할지 여부를 결정한다.
     // protected $allowCallbacks = false;
+
+    /**
+     * =====================
+     * 콜백 정의
+     *
+     * - 사용할 모델에 먼저 새 클래스 메소드를 작성하고 콜백을 지정한다.
+     * - 이 클래스는 $data 배열을 매개 변수로 받는다.
+     * - $data 배열에 전달되는 내용은 이벤트마다 다르지만, 원래 메소드에 전달된 기본 데이터를 `data`라는 키에 전달한다.
+     * - `inset` 또는 `update` 메소드의 경우, 데이터베이스에 삽입되는 키/값 쌍이 된다.
+     * - 기본 배열에는 메소드에 전달된 다른 값도 포함된다.
+     * - 다른 콜백이 정보를 전달받을 수 있도록 호출된 콜백 메소드는 `$data` 배열을 리턴해야 한다.
+     * =====================
+     */
+    protected function hashPassword(array $data)
+    {
+        if (!isset($data['data']['password'])) return $data;
+
+        $data['data']['password_hash'] = password_hash($data['data']['password'], PASSWORD_DEFAULT);
+        unset($data['data']['password']);
+
+        return $data;
+    }
+
+    /**
+     * ======================
+     * 콜백 지정
+     *
+     * - 적절한 클래스 속성(beforeInsert, afterUpdate 등)에 메소드 이름을 추가하여 콜백이 호출되는 시기를 지정한다.
+     * - 단일 이벤트에 여러 개의 콜백을 추가할 수 있으며 지정된 순서대로 처리된다.
+     * - 여러 이벤트에서 동일한 콜백을 사용할 수도 있다.
+     * ======================
+     */
+    protected $beforeInsert = ['hashPassword'];
+    protected $beforeUpdate = ['hashPassword'];
+
+    /**
+     * =================================
+     * Modifying Find Data
+     *
+     * - `beforeFind`와 `afterFind` 메소드는 모델의 정상적인 응답을 대체하기 위해 수정된 데이터 셀을 반환할 수 있다.
+     * - `afterFind`의 경우 반환 배열에서 `data`에 대한 변경 내용은 호출 컨텍스트로 자동 전달된다.
+     * - `beforeFind`가 검색 워크플로우를 가로 채기 전, 또 다른 boolean 값 `returnData`도 반환한다.
+     * =================================
+     */
+    protected $beforeFind = ['checkCache'];
+
+    protected function checkCache(array $data)
+    {
+        // 요청한 항목이 캐시에 있는지 확인
+        if (isset($data['id']) && $item = $this->getCachedItem($data['id'])) {
+            $data['data'] = $item;
+            $data['returnData'] = true;
+
+            return $data;
+        }
+    }
 }

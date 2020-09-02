@@ -1,6 +1,8 @@
 <?php namespace App\Entities;
 
-class JobEntity
+use CodeIgniter\Entity;
+
+class JobEntity extends Entity
 {
     protected $id;
     protected $name;

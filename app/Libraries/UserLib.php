@@ -6,11 +6,13 @@
  */
 class UserLib
 {
-    protected $userModel;
+    private $userModel;
+    private $userBuilder;
 
     public function __construct()
     {
         $this->userModel = model('App\Models\UserModel', false);
+        $this->userBuilder = $this->userModel->builder(); // 해당 모델의 데이터베이스 연결이 필요할 때 쿼리 빌더 공유 인스턴스에 액세스할 수 있다.
     }
 
     /**
@@ -25,7 +27,7 @@ class UserLib
      * @param int $user_id : 유저 일련번호
      * @return array $user : 유저 정보 단일 행(row)
      */
-    public function find($user_id)
+    public function find(int $user_id)
     {
         $user = $this->userModel->find($user_id); // 값은 `$returnType`에 지정된 형식으로 반환된다.
 
@@ -44,7 +46,7 @@ class UserLib
      * @return array $user : null 또는 인덱스화된 열(column)의 값 배열을 반환한다.
      * @Exception DataException : `$column_name`이 컬럼명에 일치하지 않을 경우 발생
      */
-    public function findColumn($column_name)
+    public function findColumn(string $column_name)
     {
         $user = $this->userModel->findColumn($column_name);
         return $user;
@@ -55,7 +57,7 @@ class UserLib
      *
      * @return array $users : 유저 정보 목록
      */
-    public function findAll($limit, $offset, $where = array())
+    public function findAll(int $limit, int $offset, array $where)
     {
         $users = null;
 
@@ -98,7 +100,7 @@ class UserLib
      *
      * @return array $users : 유저 목록
      */
-    public function withDeleted($withDeleted = true)
+    public function withDeleted(bool $withDeleted = true)
     {
         $users = null;
 
@@ -137,7 +139,7 @@ class UserLib
      * @param array $resource : 저장할 데이터
      * @return array 결과
      */
-    public function insert($resource = array())
+    public function insert(array $resource)
     {
         $data = [
             'username' => $resource['username'],
@@ -169,7 +171,7 @@ class UserLib
      * @param array $resource
      * @return array 결과
      */
-    public function update($resource = array())
+    public function update(array $resource)
     {
         $data = [
             'username' => $resource['username'],
@@ -206,7 +208,7 @@ class UserLib
      *
      * @return array 결과
      */
-    public function save($resource = array())
+    public function save(array $resource)
     {
         $result = array();
         $rtMsg = '유저 정보 저장에 성공했습니다.';
@@ -266,7 +268,7 @@ class UserLib
      * @param int $id : 유저 일련번호
      * @return void
      */
-    public function delete($id)
+    public function delete(int $id)
     {
         $this->userModel->delete($id);
 
@@ -326,7 +328,7 @@ class UserLib
                 ]
             ],
             'email' => [
-                'rules' => 'required|valid_email|is_unique[users.email]',
+                'rules' => 'required|valid_email|is_unique[users.email, id, {id}]',
                 'errors' => [
                     'required' => 'We really need your email.',
                     'valid_email' => 'Please check the Email field. It does not appear to be valid.',
@@ -369,5 +371,122 @@ class UserLib
         );
 
         $this->userModel->setValidationMessages($filedValidationMessage);
+    }
+
+    /**
+     * =======================================
+     * 유효성 검사 규칙 검색
+     * =======================================
+     */
+
+    /**
+     * `validationRules` 속성에 액세스하여 모델의 유효성 검사 규칙을 검색할 수 있다.
+     * - 옵션을 사용하여 접근자 메서드를 직접 호출하여 해당 규칙의 하위 집합만 검색 할 수도 있다.
+     * @param array $options : 하나의 요소를 가진 연관 배열이며, 키는 "except" 또는 "only"이며, 값은 해당 필드 이름의 배열이다.
+     *     - $options = array('except' => ['usename']);
+     *         - "사용자 이름" 필드를 제외한 모든 필드에 대한 규칙을 가져옵니다
+     *     - $options = array('only' => ['city', 'state']);
+     *         - "도시" 및 "국가" 필드에만 규칙을 가져오십시오
+     * @return void
+     */
+    public function getValidationRules(array $options)
+    {
+        if (empty($options)) {
+            $rules = $this->userModel->validationRules;
+        } else {
+            $rules = $this->userModel->getValidationRules($options);
+        }
+    }
+
+    /**
+     * ========================
+     * 쿼리 빌더 사용
+     * ========================
+     */
+
+    /**
+     * 빌더는 모델의 $table로 설정되어 있다.
+     * - 동일한 체인 호출에서 쿼리 빌더 메소드와 Model의 CRUD 메소드를 함께 사용할 수 있다.
+     *
+     * @return array $users : 조회된 유저 목록
+     */
+    public function useQueryBuilder()
+    {
+        $users = $this->userModel->where('status', 'active')
+            ->orderBy('last_login', 'asc')
+            ->findAll();
+
+        return $users;
+    }
+
+    /**
+     * 모델의 데이터베이스 연결에 완벽하게 액세스할 수도 있다.
+     *
+     * @param string $name : 이름
+     * @return string $userName : 유저 이름
+     */
+    public function escape(string $name)
+    {
+        $userName = $this->userModel->escape($name);
+        return $userName;
+    }
+
+    /**
+     * ==========================
+     * 런타임 리턴 유형 변경
+     *
+     * - find() 메소드는 클래스 $returnType 속성으로 사용하여 데이터가 리턴되는 형식을 지정할 수 있다.
+     * - 그러나 지정한 형식과 다른 형식으로 데이터를 다시 원할 수도 있다.
+     * - 모델은 이를 수행할 수 있는 메소드를 제공한다.
+     *
+     * Note:
+     * - 이 메소드는 다음 find() 메소드 호출에 대한 리턴 유형만 변경한다.
+     * - 그 후에는 기본값으로 재설정된다.
+     * ==========================
+     */
+
+    /**
+     * find() 메소드의 데이터를 연관 배열로 리턴한다.
+     *
+     * @return array $users : 유저 목록
+     */
+    public function asArray()
+    {
+        $users = $this->userModel->asArray()->where('status', 'active')->findAll();
+        return $users;
+    }
+
+    /**
+     * find() 메소드의 데이터를 표준 객체 또는 사용자 정의 클래스 인스턴스로 반환한다.
+     *
+     * @return array $users : 유저 목록
+     */
+    public function asObject()
+    {
+        // 표준 객체로 반환
+        $users = $this->userModel->asObject()->where('status', 'active')->findAll();
+
+        // 사용자 정의 클래스 인스턴스로 반환
+        $users = $this->userModel->asObject('User')->where('status', 'active')->findAll();
+    }
+
+    /**
+     * ============================
+     * 많은 양의 데이터 처리
+     *
+     * - 많은 양의 데이터를 처리해야 할 때, 메모리가 부족해질 위험이 있다.
+     * - 이를 방지하기 위해 chunk() 메소드를 사용하여 작업을 수행하면 작은 크기의 청크를 얻을 수 있다.
+     * - 첫 번째 매개 변수는 단일 청크의 크기이다.
+     * - 두 번째 매개 변수는 각 청크 데이터 행에 대해 호출될 클로저(Closure)이다.
+     *
+     * - 이 방법은 크론 작업, 데이터 내보내기(export) 또는 기타 대규모 작업에 적합하다.
+     * ============================
+     */
+    public function chunk()
+    {
+        $this->userModel->chunk(100, function($data) {
+            // do something.
+            // $data = 단일 행 데이터
+        });
     }
 }
