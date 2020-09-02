@@ -8,7 +8,7 @@ class UserLib
 {
     protected $userModel;
 
-    private function __construct()
+    public function __construct()
     {
         $this->userModel = model('App\Models\UserModel', false);
     }
@@ -135,7 +135,7 @@ class UserLib
      * - 배열의 키는 `$table`의 열(column) 이름과 일치해야 하며, 배열의 값은 해당 키에 저장할 값이다.
      *
      * @param array $resource : 저장할 데이터
-     * @return void
+     * @return array 결과
      */
     public function insert($resource = array())
     {
@@ -144,7 +144,19 @@ class UserLib
             'email' => $resource['email']
         ];
 
-        $this->userModel->insert($data);
+        $queryResult = $this->userModel->insert($data);
+
+        $result = array();
+
+        if($queryResult === false) {
+            $result['rt'] = 400;
+            $result['errors'] = $this->userModel->errors();
+        } else {
+            $result['rt'] = 200;
+            $result['rtMsg'] = '유저 정보 저장에 성공했습니다.';
+        }
+
+        return $result;
     }
 
     /**
@@ -155,7 +167,7 @@ class UserLib
      * - 배열의 키는 `$table`의 열(column) 이름과 일치해야 하며, 배열의 값은 해당 키에 저장할 값이다.
      *
      * @param array $resource
-     * @return void
+     * @return array 결과
      */
     public function update($resource = array())
     {
@@ -164,42 +176,74 @@ class UserLib
             'email' => $resource['email']
         ];
 
-        $this->userModel->update($resource['id'], $data);
+        $queryResult = $this->userModel->update($resource['id'], $data);
 
         // 기본키(primary) 배열을 첫 번째 매개 변수로 전달하여, 한 번의 호출로 여러 레코드를 업데이트 할 수 있다.
         $data = [
             'active' => 1
         ];
 
-        $this->userModel->update([1, 2, 3], $data);
+        $queryResult = $this->userModel->update([1, 2, 3], $data);
 
         // 유효성 검사, 이벤트 등의 추가 이점을 갖는 쿼리 빌더의 업데이트 명령을 수행하려면, 매개 변수를 비운채 사용
-        $this->userModel->whereIn('id', [1, 2, 3])->set($data)->update();
+        $queryResult = $this->userModel->whereIn('id', [1, 2, 3])->set($data)->update();
+
+        $result = array();
+
+        if($queryResult === false) {
+            $result['rt'] = 400;
+            $result['errors'] = $this->userModel->errors();
+        } else {
+            $result['rt'] = 200;
+            $result['rtMsg'] = '유저 정보 수정에 성공했습니다.';
+        }
+
+        return $result;
     }
 
     /**
      * `$primaryKey` 값과 일치하는 배열 키가 존재하는지의 여부에 따라 레코드 INSERT 또는 UPDATE를 자동으로 처리한다.
      *
-     * @return void
+     * @return array 결과
      */
     public function save($resource = array())
     {
-        // insert로 작동
-        $data = [
-            'username' => $resource['username'],
-            'email' => $resource['email']
-        ];
+        $result = array();
+        $rtMsg = '유저 정보 저장에 성공했습니다.';
 
-        $this->userModel->save($data);
+        if (empty($resource['id'])) {
+            // insert로 작동
+            $data = [
+                'username' => $resource['username'],
+                'email' => $resource['email']
+            ];
 
-        // update로 작동($primaryKey = 'id'에 매칭될 경우)
-        $data = [
-            'id' => $resource['id'],
-            'username' => $resource['username'],
-            'email' => $resource['email']
-        ];
+            $queryResult = $this->userModel->save($data);
+        } else {
+            $rtMsg = '유저 정보 수정에 성공했습니다.';
+            // update로 작동($primaryKey = 'id'에 매칭될 경우)
+            $data = [
+                'id' => $resource['id'],
+                'username' => $resource['username'],
+                'email' => $resource['email']
+            ];
 
-        $this->userModel->save($data);
+            $queryResult = $this->userModel->save($data);
+        }
+
+        // 실패하면 모델은 `false`를 반환한다.
+        if($queryResult === false) {
+            $result['rt'] = 400;
+            // `errors()` 메소드를 사용하여 유효성 검사 오류를 검색할 수 있다.
+            // 필드 이름과 관련 오류가 있는 배열을 반환한다.
+            // 양식(form) 맨 위에 모든 오류를 표시하거나 개별적으로 표시하는 데 사용할 수 있다.
+            $result['errors'] = $this->userModel->errors();
+        } else {
+            $result['rt'] = 200;
+            $result['rtMsg'] = $rtMsg;
+        }
+
+        return $result;
 
         /**
          * save 메소드는 단순하지 않은 오브젝트를 인식하고 공용 및 보호된 값을 배열로 가져와서 적절한 insert 또는 update 메소드를 전달하여 사용자 정의 클래스 결과 오브젝트에 대한 작업을 훨씬 간단하게 만들 수 있다.
@@ -207,7 +251,6 @@ class UserLib
          * 엔티티 클래스는 사용자, 블로그 게시물, 작업 등과 같은 개체 유형의 단일 인스턴스를 나타내는 간단한 클래스이다.
          * 이 클래스는 특정 방식으로 요소를 형식화하는 등 오브젝트 자체를 둘러싼 비즈니스 로직을 유지 보수한다.
          * 데이터베이스에 저장되는 방법에 대해 전혀 알지 못한다.
-         * 간단하게 다음과 같이 보일 수 있다.
          */
     }
 
@@ -246,5 +289,85 @@ class UserLib
     public function purgeDeleted()
     {
         $this->userModel->purgeDeleted();
+    }
+
+    /**
+     * ================================================
+     * 데이터 검증
+     * ================================================
+     */
+
+    /**
+     * 이 함수는 필드 유효성 검사 규칙을 설정한다.
+     *
+     * @return void
+     */
+    public function setValidationRule()
+    {
+        $fieldName = 'username';
+        $fieldRules = 'required|alpha_numeric_space|min_length[3]';
+
+        $this->userModel->setValidationRule($fieldName, $fieldRules);
+    }
+
+    /**
+     * 이 함수는 유효성 검사 규칙을 설정한다.
+     *
+     * @return void
+     */
+    public function setValidationRules()
+    {
+        $validationRules = [
+            'username' => [
+                'label' => 'Username',
+                'rules' => 'required|alpha_numeric_space|min_length[3]',
+                'errors' => [
+                    'required' => 'You must choose a username',
+                ]
+            ],
+            'email' => [
+                'rules' => 'required|valid_email|is_unique[users.email]',
+                'errors' => [
+                    'required' => 'We really need your email.',
+                    'valid_email' => 'Please check the Email field. It does not appear to be valid.',
+                    'is_unique' => 'Sorry. That email has already been taken. Please choose another.'
+                ]
+            ],
+        ];
+
+        $this->userModel->setValidationRules($validationRules);
+    }
+
+    /**
+     * 기능별로 유혀성 검사 메시지를 필드로 설정하는 다른 방법
+     * - 이 함수는 오류 메시지를 설정한다.
+     *
+     * @return void
+     */
+    public function setValidationMessage()
+    {
+        $fieldName = 'username';
+        $fieldValidationMessage = array(
+            'required' => 'Your name is required here',
+        );
+
+        $this->userModel->setValidationMessage($fieldName, $fieldValidationMessage);
+    }
+
+    /**
+     * 이 함수는 필드 메시지를 설정합니다.
+     *
+     * @return void
+     */
+    public function setValidationMessages()
+    {
+        $filedValidationMessage = array(
+            'username' => array(
+                'required' => 'Your baby name is missing.',
+                'min_length' => 'Too short, man!',
+            ),
+        );
+
+        $this->userModel->setValidationMessages($filedValidationMessage);
     }
 }

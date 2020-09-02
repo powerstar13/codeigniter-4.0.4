@@ -12,7 +12,7 @@ class UserModel extends Model
      */
 
     // "group_name"을 데이터베이스 구성 파일에 정의된 데이터베이스 그룹 이름으로 바꾸십시오.
-    protected $DBGroup = 'group_name';
+    protected $DBGroup = 'development';
 
     // --------------------------------------
 
@@ -49,7 +49,7 @@ class UserModel extends Model
     // 이 배열은 save, insert, update 메소드를 통하여 설정할 수 있는 필드 이름이다.
     // 여기에 명시되지 않은 필드명은 삭제된다.
     // 이렇게 하면 양식(Form)에서 입력된 모든 데이터를 모델에 모두 입력되는 것을 방지하여 대량 할당 취약점이 발생하지 않도록 보호할 수 있다.
-    protected $allowedFields = ['name', 'email'];
+    protected $allowedFields = ['username', 'email', 'password'];
 
     // 이 값은 현재 날짜가 모든 INSERT 및 UPDATE에 자동으로 추가되는지 여부를 결정한다.
     // `true`이면 $dateFormat에 지정된 형식으로 현재 시간을 설정한다.
@@ -70,18 +70,21 @@ class UserModel extends Model
 
     // 규칙을 저장하는 방법과 같이 유효성 검사 규칙 배열을 포함하거나 유효성 검사 그룹(Validation.php에서 사용자 정의함)의 이름을 포함하는 문자열을 포함한다.
     protected $validationRules = [
-        'username'     => 'required',
-        'password'     => 'required',
-        'pass_confirm' => 'required|matches[password]',
-        'email'        => 'required|valid_email'
+        'username'     => 'required|alpha_numeric_space|min_length[3]',
+        'email'        => 'required|valid_email|is_unique[users.email]',
+        'password'     => 'required|min_length[8]',
+        'pass_confirm' => 'required_with[password]|matches[password]',
     ];
     // 사용자 정의 오류 메시지 설정과 같이, 유효성 검증 중에 사용해야하는 사용자 정의 오류 메시지 배열을 포함한다.
+    // 만약 Validation.php 에서 설정한 rule을 사용할 경우 배열 안에 rule에서 선언한 name을 적어주면 된다.
     protected $validationMessages = [
         'username' => [
-            'required'    => 'You must choose a username.',
+            'required'    => '이름을 입력해주세요.',
         ],
         'email'    => [
-            'valid_email' => 'Please check the Email field. It does not appear to be valid.'
+            'required' => '이메일을 입력해주세요.',
+            'valid_email' => '이메일 형식에 맞지 않습니다.',
+            'is_unique' => '이미 가입된 이메일 입니다.'
         ]
     ];
     // 모든 `inserts`와 `updates`의 유효성 검사를 하지 않을지 여부이다.

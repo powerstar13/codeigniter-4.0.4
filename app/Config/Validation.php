@@ -41,10 +41,10 @@ class Validation
      * - 다음은 검증 배열에 대한 프로토 타입이다.
      */
     public $signup = [
-        'username' => 'required',
-        'password' => 'required',
-        'pass_confirm' => 'required|matches[password]',
-        'email' => 'required|valid_email',
+        'username'     => 'required|alpha_numeric_space|min_length[3]',
+        'email'        => 'required|valid_email|is_unique[users.email]',
+        'password'     => 'required|min_length[8]',
+        'pass_confirm' => 'required_with[password]|matches[password]',
     ];
 
     // run() 메소드를 호출할 때 사용할 그룹을 지정한다.
@@ -57,7 +57,9 @@ class Validation
             'required' => 'You must choose a username',
         ],
         'email' => [
+            'required' => 'We really need your email.',
             'valid_email' => 'Please check the Email field. It does not appear to be valid.',
+            'is_unique' => 'Sorry. That email has already been taken. Please choose another.'
         ]
     ];
 
@@ -68,15 +70,17 @@ class Validation
     public $signup2 = [
         'username' => [
             'label' => 'Username',
-            'rules' => 'required',
+            'rules' => 'required|alpha_numeric_space|min_length[3]',
             'errors' => [
                 'required' => 'You must choose a username',
             ]
         ],
         'email' => [
-            'rules' => 'required|valid_email',
+            'rules' => 'required|valid_email|is_unique[users.email]',
             'errors' => [
+                'required' => 'We really need your email.',
                 'valid_email' => 'Please check the Email field. It does not appear to be valid.',
+                'is_unique' => 'Sorry. That email has already been taken. Please choose another.'
             ]
         ],
     ];
