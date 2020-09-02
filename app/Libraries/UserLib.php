@@ -210,4 +210,41 @@ class UserLib
          * 간단하게 다음과 같이 보일 수 있다.
          */
     }
+
+    /**
+     * ========================================================
+     * 데이터 삭제
+     * ========================================================
+     */
+
+    /**
+     * 첫 번째 매개 변수로 제공된 기본 키 값을 사용하여 모델 테이블에서 일치하는 레코드를 삭제한다.
+     *
+     * @param int $id : 유저 일련번호
+     * @return void
+     */
+    public function delete($id)
+    {
+        $this->userModel->delete($id);
+
+        // 모델의 $useSoftDeletes 값이 `true`인 경우, `deleted_at`을 현재 날짜 및 시간으로 설정하여 행을 업데이트한다.
+        // 두 번째 매개 변수를 true로 설정하여 영구적으로 삭제할 수 있다.
+        $this->userModel->delete($id, true);
+
+        // 첫 번째 매개 변수로 기본 키 배열을 전달하여 한 번에 여러 레코드를 삭제할 수 있다.
+        $this->userModel->delete([1, 2, 3]);
+
+        // 매개 변수가 전달되지 않으면 쿼리 빌더의 delete 메소드처럼 작동하며 where 메소드 호출이 필요하다.
+        $this->userModel->where('id', $id)->delete();
+    }
+
+    /**
+     * `deleted_at IS NOT NULL`이 있는 모든 행을 데이터베이스 테이블에서 '영구적으로 제거'한다.
+     *
+     * @return void
+     */
+    public function purgeDeleted()
+    {
+        $this->userModel->purgeDeleted();
+    }
 }
