@@ -52,6 +52,28 @@ class UserEntity extends Entity
     protected $dates = ['created_at', 'updated_at', 'deleted_at'];
 
     /**
+     * ============================================
+     * 속성 캐스팅
+     *
+     * - `casts` 속성을 사용하여 엔티티의 속성을 공통 데이터 유형으로 변환하도록 지정할 수 있다.
+     *     - 이 옵션은 키가 클래스 속성의 이름이고, 값은 캐스트 해야 하는 데이터 유형의 배열이어야 한다.
+     *     - 캐스팅은 값을 읽을 때만 영향을 준다.
+     *     - 엔티티나 데이터베이스의 영구적인 값에 영향을 주는 변환이 발생하지 않는다.
+     *     - 속성은 다음 데이터 형식 중 하나로 캐스팅 할 수 있다.
+     *         - integer, float, double, string, boolean, object, array, datetime, timestamp
+     *     - 유형의 시작 부분에 물음표를 추가하면 특성을 null 입력 가능으로 표시한다.
+     *         - ?string
+     *         - ?integer
+     *
+     * - 다음 예는 UserEntity 의 `is_banned` 속성을 boolean으로 캐스팅한다.
+     * ============================================
+     */
+    protected $casts = [
+        'is_banned' => 'boolean',
+        'is_banned_nullable' => '?boolean',
+    ];
+
+    /**
      * ====================================
      * 비즈니스 로직 처리
      *
