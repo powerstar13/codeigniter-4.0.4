@@ -67,4 +67,23 @@ class UserEntityLib
         $user = new UserEntity($data);
         $this->userEntityModel->save($user);
     }
+
+    /**
+     * ===============================
+     * 뮤테이터(Mutators)
+     *
+     * - 속성 중 하나가 설정되면 `app/Config/App.php`에 설정된 대로 어플리케이션의 현재 시간대를 사용하여 Time 인스턴스로 변환된다.
+     * ===============================
+     */
+    public function mutators()
+    {
+        $user = new UserEntity();
+
+        // Time 인스턴스로 Convert 된다.
+        $user->created_at = 'April 15, 2017 10:30:00';
+
+        // Time 에서 제공하는 메소드를 사용
+        echo $user->created_at->humanize();
+        echo $user->created_at->setTimezone('Europe/London')->toDateString;
+    }
 }

@@ -12,6 +12,7 @@ class UserEntity extends Entity
         'password' => null,
         'created_at' => null,
         'updated_at' => null,
+        'deleted_at' => null,
     ];
 
     /**
@@ -37,6 +38,18 @@ class UserEntity extends Entity
     protected $datamap = [
         'full_name' => 'name'
     ];
+
+    /**
+     * =====================================
+     * 뮤테이터(Mutators)
+     *
+     * - 기본적으로 Entity 클래스는 created_at, updated_at, deleted_at 이라는 필드를 데이터를 설정하거나 검색할 때마다 `Time` 인스턴스로 변환한다.
+     *     - Time 클래스는 변하지 않고, 지역화된 방식으로 많은 유용한 메소드를 제공한다.
+     *
+     * - `options['dates']` 배열에 이름을 추가하여 자동으로 변환할 특성을 정의할 수 있다.
+     * =====================================
+     */
+    protected $dates = ['created_at', 'updated_at', 'deleted_at'];
 
     /**
      * ====================================
@@ -75,7 +88,7 @@ class UserEntity extends Entity
      */
     public function setCreatedAt(string $dateString)
     {
-        $this->attributes['created_at'] = new Time($dateString, 'UTC');
+        $this->attributes['created_at'] = new Time($dateString, 'Asia/Seoul');
 
         return $this;
     }
