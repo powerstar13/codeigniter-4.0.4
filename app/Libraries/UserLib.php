@@ -213,19 +213,19 @@ class UserLib
         $result = array();
         $rtMsg = '유저 정보 저장에 성공했습니다.';
 
-        if (empty($resource['id'])) {
-            // insert로 작동
+        if (isset($resource['id']) && !empty($resource['id'])) {
+            $rtMsg = '유저 정보 수정에 성공했습니다.';
+            // update로 작동($primaryKey = 'id'에 매칭될 경우)
             $data = [
+                'id' => $resource['id'],
                 'username' => $resource['username'],
                 'email' => $resource['email']
             ];
 
             $queryResult = $this->userModel->save($data);
         } else {
-            $rtMsg = '유저 정보 수정에 성공했습니다.';
-            // update로 작동($primaryKey = 'id'에 매칭될 경우)
+            // insert로 작동
             $data = [
-                'id' => $resource['id'],
                 'username' => $resource['username'],
                 'email' => $resource['email']
             ];
