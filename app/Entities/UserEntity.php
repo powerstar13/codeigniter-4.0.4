@@ -4,5 +4,5 @@ use CodeIgniter\Entity;
 
 class UserEntity extends Entity
 {
-    
+
 }
