@@ -86,4 +86,24 @@ class UserEntityLib
         echo $user->created_at->humanize();
         echo $user->created_at->setTimezone('Europe/London')->toDateString;
     }
+
+    /**
+     * =======================
+     * Array/Json 캐스팅
+     * =======================
+     *
+     * @param int $id
+     * @return void
+     */
+    public function casts(int $id)
+    {
+        $user = $this->userEntityModel->find($id);
+
+        $options = $user->options;
+        $options['foo'] = 'bar';
+
+        $user->options = $options; // 속성 값 설정될 때마다 casts 작동
+
+        $this->userEntityModel->save($user);
+    }
 }

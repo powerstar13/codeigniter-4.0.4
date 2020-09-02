@@ -53,7 +53,7 @@ class UserEntity extends Entity
 
     /**
      * ============================================
-     * 속성 캐스팅
+     * 1. 속성 캐스팅
      *
      * - `casts` 속성을 사용하여 엔티티의 속성을 공통 데이터 유형으로 변환하도록 지정할 수 있다.
      *     - 이 옵션은 키가 클래스 속성의 이름이고, 값은 캐스트 해야 하는 데이터 유형의 배열이어야 한다.
@@ -66,11 +66,27 @@ class UserEntity extends Entity
      *         - ?integer
      *
      * - 다음 예는 UserEntity 의 `is_banned` 속성을 boolean으로 캐스팅한다.
+     *
+     * --------------------------------------------
+     *
+     * 2. Array/Json 캐스팅
+     *
+     * - Array/Json 캐스팅은 직렬화된 배열 또는 JSON을 저장하는 필드에 특히 유용하다.
+     *     - array : 자동으로 직렬화 해제
+     *     - json : json_decode($value, false)값으로 자동 설정
+     *     - json-array : json_decode($value, true)값으로 자동 설정
+     *
+     * - 속성 값을 읽을 때 속성을 캐스팅할 수 있는 나머지 데이터 형식과 달리
+     *     - array : serialize 하여 캐스트
+     *     - json, json-array : json_encode 함수를 사용하여 캐스트
      * ============================================
      */
     protected $casts = [
         'is_banned' => 'boolean',
         'is_banned_nullable' => '?boolean',
+        'options' => 'array',
+        'options_object' => 'json',
+        'options_array' => 'json-array',
     ];
 
     /**
