@@ -106,4 +106,26 @@ class UserEntityLib
 
         $this->userEntityModel->save($user);
     }
+
+    /**
+     * =========================
+     * 변경된 속성 확인
+     *
+     * - 속성의 이름을 이용하여 엔티티 속성이 작성된 이후로 변경되었는지 확인할 수 있다.
+     * =========================
+     *
+     * @param string $column
+     * @return void
+     */
+    public function hasChanged(string $column)
+    {
+        $user = new UserEntity();
+        $user->hasChanged($column); // false
+
+        $user->name = 'Fred';
+        $user->hasChanged($column); // true
+
+        // 전체 엔티티의 변경 여부를 확인하고 싶다면 매개 변수를 생략한다.
+        $user->hasChanged(); // true
+    }
 }
