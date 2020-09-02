@@ -45,4 +45,26 @@ class UserEntityLib
             $this->userEntityModel->save($newUser);
         }
     }
+
+    /**
+     * ====================================
+     * 빠르게 속성 채우기
+     *
+     * - Entity 클래스는 키/값 쌍 배열을 클래스에 전달하여 클래스 속성을 채울 수 있는 fill() 메소드도 제공한다.
+     * - 배열의 모든 속성은 Entity에 설정된다.
+     * - 그러나 모델을 통해 저장할 때 `$allowedFields`에 명시된 필드만 실제 데이터베이스에 저장되므로 필드가 잘못 저장되는 것에 대해 걱정할 필요가 없다.
+     * ====================================
+     */
+    public function fill()
+    {
+        $data = $this->request->getPost();
+
+        $user = new UserEntity();
+        $user->fill($data);
+        $this->userEntityModel->save($user);
+
+        // 생성자를 통하여 데이터를 전달할 수도 있으며, 인스턴스화 중에는 fill() 메소드를 통해 데이터를 전달한다.
+        $user = new UserEntity($data);
+        $this->userEntityModel->save($user);
+    }
 }
