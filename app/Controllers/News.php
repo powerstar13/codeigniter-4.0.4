@@ -1,4 +1,4 @@
-<?php namespace App\Controlelrs;
+<?php namespace App\Controllers;
 
 use CodeIgniter\Controller;
 use App\Libraries\NewsLib;
@@ -48,7 +48,7 @@ class News extends Controller
         $data['title'] = $data['news']['title'];
 
         echo view('templates/header', $data);
-        echo view('news/overview', $data);
+        echo view('news/view', $data);
         echo view('templates/footer', $data);
     }
 }
