@@ -51,4 +51,39 @@ class News extends Controller
         echo view('news/view', $data);
         echo view('templates/footer', $data);
     }
+
+    /**
+     * 뉴스 아이템 저장
+     *
+     * @return void
+     */
+    public function create()
+    {
+        if (
+            // 1. POST 요청을 처리하는지 확인
+            $this->request->getMethod() === 'post'
+            // 2. 제출된 양식을 확인하여 데이터가 검증 규칙을 통과했는지 확인
+            && $this->validation->run($_POST, 'newsCreate')
+            // && $this->validate([
+            //     'title' => 'required|min_length[3]|max_length[255]',
+            //     'body' => 'required'
+            // ])
+        ) {
+            $post = $this->request->getPost();
+
+            $result = $this->newsLib->save($post);
+
+            if ($result['rt'] === 200) {
+                echo view('news/success');
+            } else {
+                return redirect('news/create');
+            }
+        } else {
+            $data['title'] = 'Create a news item';
+
+            echo view('templates/header', $data);
+            echo view('news/create', $data);
+            echo view('templates/footer');
+        }
+    }
 }

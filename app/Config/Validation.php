@@ -84,4 +84,16 @@ class Validation
             ]
         ],
     ];
+
+    /**
+     * ==================================
+     * News
+     * ==================================
+     */
+
+    // 뉴스 아이템 추가 규칙
+    public $newsCreate = [
+        'title' => 'required|min_length[3]|max_length[255]',
+        'body' => 'required'
+    ];
 }

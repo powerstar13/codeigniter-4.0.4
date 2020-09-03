@@ -30,4 +30,32 @@ class NewsLib
             ->where(['slug' => $slug])
             ->first();
     }
+
+    /**
+     * 뉴스 아이템 저장 처리
+     *
+     * @param array $data
+     * @return array
+     */
+    public function save(array $resource) : array
+    {
+        $data = array(
+            'title' => $resource['title'],
+            'slug' => url_title($resource['title'], '-', TRUE), // 전달받은 문자열에서 모든 공백을 대시(-)로 바꾸고 모든 문자가 소문자인지 확인한다. (URI로 사용 가능한 완벽한 slug를 만든다.)
+            'body' => $resource['body'],
+        );
+        $queryResult = $this->newsModel->save($data);
+
+        $result = array();
+
+        if($queryResult === false) {
+            $result['rt'] = 400;
+            $result['errors'] = $this->userModel->errors();
+        } else {
+            $result['rt'] = 200;
+            $result['rtMsg'] = '유저 정보 저장에 성공했습니다.';
+        }
+
+        return $result;
+    }
 }

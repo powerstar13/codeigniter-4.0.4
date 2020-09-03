@@ -99,7 +99,20 @@ class Controller
 	 *
 	 * @var Validation
 	 */
-	protected $validator;
+    protected $validator;
+
+    /**
+     * ==============================================
+     * Develop
+     * ==============================================
+     */
+
+    protected $validation;
+
+    public function __construct()
+    {
+        $this->validation = Services::validation();
+    }
 
 	//--------------------------------------------------------------------
 
@@ -123,7 +136,7 @@ class Controller
 			$this->forceHTTPS($this->forceHTTPS);
 		}
 
-		$this->loadHelpers();
+        $this->loadHelpers();
 	}
 
 	//--------------------------------------------------------------------
@@ -219,5 +232,5 @@ class Controller
 			->run();
 	}
 
-	//--------------------------------------------------------------------
+    //--------------------------------------------------------------------
 }
