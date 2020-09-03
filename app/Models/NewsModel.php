@@ -17,10 +17,12 @@ class NewsModel extends Model
 {
     protected $table = 'news';
 
-    protected $allowedFields = ['title', 'slug', 'body'];
+    // insert 및 update 메소드는 기본적으로 업데이트할 안전할 필드를 모르기 때문에 업데이트 가능한 필드 목록을 저장한다.
+    protected $allowedFields = ['title', 'slug', 'body']; // `id`는 자동증가(auto-increment) 필드이기 때문에 생략된다.
 
     protected $validationRules = [
         'title' => 'required',
+        'slug' => 'required',
         'body' => 'required'
     ];
 }
