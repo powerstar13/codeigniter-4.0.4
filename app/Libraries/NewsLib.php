@@ -20,9 +20,9 @@ class NewsLib
      * 이 메소드는 Query Builder를 사용하여 현재 테이블에서 명령을 실행하고 원하는 형식으로 결과 배열을 반환하는 도우미(helper) 메소드이다.
      * 이 예에서 `findAll()`은 일련의 객체(Object)를 반환한다.
      */
-    public function getNews($slug = false)
+    public function getNews(string $slug = null)
     {
-        if ($slug === false) {
+        if (empty($slug)) {
             return $this->newsModel->findAll();
         }
 
