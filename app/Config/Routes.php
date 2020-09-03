@@ -34,6 +34,7 @@ $routes->get('/', 'Home::index'); // 이 지시문은 지정되지 않은 요청
 // CodeIgniter는 라우팅 규칙을 위에서 아래로 읽고, 요청과 첫 번째로 일치하는 규칙으로 라우팅합니다.
 // 각 규칙은 오른쪽의 슬래시로 구분된 컨트롤러와 메소드 이름에 매핑된 왼족의 정규식입니다.
 $routes->get('user/save', 'User::save');
+$routes->match(['get', 'post'], 'news/create', 'News::create');
 $routes->get('news/(:segment)', 'News::view/$1');
 $routes->get('news', 'News::index');
 $routes->get('(:any)', 'Pages::view/$1');

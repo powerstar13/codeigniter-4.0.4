@@ -50,7 +50,7 @@ class NewsLib
 
         if($queryResult === false) {
             $result['rt'] = 400;
-            $result['errors'] = $this->userModel->errors();
+            $result['errors'] = $this->newsModel->errors();
         } else {
             $result['rt'] = 200;
             $result['rtMsg'] = '유저 정보 저장에 성공했습니다.';
