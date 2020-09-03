@@ -15,7 +15,7 @@ class UserModel extends Model
      */
 
     // "group_name"을 데이터베이스 구성 파일에 정의된 데이터베이스 그룹 이름으로 바꾸십시오.
-    protected $DBGroup = 'development';
+    protected $DBGroup = 'tests';
 
 
     /**
