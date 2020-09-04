@@ -107,11 +107,9 @@ class Controller
      * ==============================================
      */
 
-    protected $validation;
-
     public function __construct()
     {
-        $this->validation = Services::validation();
+        // $this->cachePage(86400 * 30);
     }
 
 	//--------------------------------------------------------------------

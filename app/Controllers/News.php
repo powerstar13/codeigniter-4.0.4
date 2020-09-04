@@ -74,8 +74,11 @@ class News extends Controller
                 return false;
             } else {
                 $data['errors'] = $result['errors'];
+                // return redirect()->back()->withInput();
             }
         }
+
+        helper('form');
 
         $data['title'] = 'Create a news item';
 
