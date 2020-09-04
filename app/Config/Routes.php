@@ -28,6 +28,12 @@ $routes->setAutoRoute(false); // 자동 라우팅을 비활성화하여 정의�
  * --------------------------------------------------------------------
  */
 
+// Modules 컨트롤러 연결 (app/Controllers 디렉토리 외부에 작성된 컨트롤러)
+// `group` 라우팅 기능을 사용하면 여기에 필요한 입력양을 줄일 수 있다.
+$routes->group('blog', ['namespace' => 'Modules\Blog\Contollers'], function($routes) {
+    $routes->get('/', 'Blog::index');
+});
+
 // We get a performance increase by specifying the default
 // route since we don't have to scan directories.
 $routes->get('/', 'Home::index'); // 이 지시문은 지정되지 않은 요청에 대해 Home 컨트롤러 내의 index() 메소드로 처리하라는 것

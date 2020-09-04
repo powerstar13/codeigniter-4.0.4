@@ -1,6 +1,12 @@
 {
 	"name": "codeigniter4/framework",
-	"type": "project",
+    "type": "project",
+    "authors": [
+        {
+            "name": "Master Hong",
+            "email": "powerstar13@hanmail.net"
+        }
+    ],
 	"description": "The CodeIgniter framework v4",
 	"homepage": "https://codeigniter.com",
 	"license": "MIT",

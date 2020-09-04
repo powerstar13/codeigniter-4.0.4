@@ -40,8 +40,10 @@ class Autoload extends AutoloadConfig
 	 * @var array
 	 */
 	public $psr4 = [
-		APP_NAMESPACE => APPPATH, // For custom app namespace
-		'Config'      => APPPATH . 'Config',
+        APP_NAMESPACE => APPPATH, // For custom app namespace
+        'App'         => APPPATH, // 필터 등이 아직 발견되지 않았는지 확인하려면
+        'Config'      => APPPATH . 'Config',
+        'Modules'     => ROOTPATH . 'modules' // 모듈 경로 등록
 	];
 
 	/**
