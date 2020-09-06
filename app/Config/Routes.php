@@ -27,7 +27,6 @@ $routes->setAutoRoute(false); // 자동 라우팅을 비활성화하여 정의�
  * Route Definitions
  * --------------------------------------------------------------------
  */
-
 // Modules 컨트롤러 연결 (app/Controllers 디렉토리 외부에 작성된 컨트롤러)
 // `group` 라우팅 기능을 사용하면 여기에 필요한 입력양을 줄일 수 있다.
 $routes->group('blog', ['namespace' => 'Modules\Blog\Contollers'], function($routes) {
@@ -44,6 +43,9 @@ $routes->match(['get', 'post'], 'news/create', 'News::create');
 $routes->get('news/(:segment)', 'News::view/$1');
 $routes->get('news', 'News::index');
 $routes->get('(:any)', 'Pages::view/$1');
+
+// CLI 전용 라우팅
+$routes->cli('tools/message/(:segment)', 'Tools::message/$1');
 
 
 /**
