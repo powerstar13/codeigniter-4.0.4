@@ -127,6 +127,8 @@ nb-configuration.xml
 
 #--------------------------------------------------------
 
-## Develop
+# ==========================
+# Develop
+# ==========================
 
-app/Config/Database.php
+## app/Config/Database.php --> .env 파일을 통해 데이터베이스 연동 설정하도록 변경
