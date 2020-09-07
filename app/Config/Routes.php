@@ -33,10 +33,17 @@ $routes->group('blog', ['namespace' => 'Modules\Blog\Controllers'], function($ro
     $routes->get('/', 'Blog::index');
 });
 $routes->group('study', ['namespace' => 'Modules\Study\Controllers'], function($routes) {
-    $routes->get('showItem', 'Ex01ConfigController::showItem');
-    $routes->get('showAll', 'Ex01ConfigController::showAll');
-    $routes->get('customAll', 'Ex01ConfigController::customAll');
-    $routes->get('customItem', 'Ex01ConfigController::customItem');
+    $routes->group('ex01', function($routes) {
+        $routes->get('showItem', 'Ex01ConfigController::showItem');
+        $routes->get('showAll', 'Ex01ConfigController::showAll');
+        $routes->get('customAll', 'Ex01ConfigController::customAll');
+        $routes->get('customItem', 'Ex01ConfigController::customItem');
+    });
+
+    $routes->group('ex02', function($routes) {
+        $routes->get('/', 'Ex02UserHelperController::index');
+        $routes->get('debugTest', 'Ex02UserHelperController::debugTest');
+    });
 });
 
 // We get a performance increase by specifying the default
