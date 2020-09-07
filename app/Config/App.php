@@ -19,9 +19,9 @@ class App extends BaseConfig
 	| and path to your installation. However, you should always configure this
 	| explicitly and never rely on auto-guessing, especially in production
 	| environments.
-	|
-	*/
-	public $baseURL = 'http://framework-v404.php.local/';
+    |
+    */
+    public $baseURL = 'http://localhost:80';
 
 	/*
 	|--------------------------------------------------------------------------
@@ -264,5 +264,17 @@ class App extends BaseConfig
 	|   - http://www.html5rocks.com/en/tutorials/security/content-security-policy/
 	|   - http://www.w3.org/TR/CSP/
 	*/
-	public $CSPEnabled = false;
+    public $CSPEnabled = false;
+
+    /**
+     * ========================================
+     * 수정해야할 설정값들을 생성자에서 처리
+     * ========================================
+     */
+    public function __construct()
+    {
+        // 사이트 기본 주소 설정 --> 현재 접속중인 페이지의 프로토콜을 판별하여 '동적'으로 설정한다.
+        // ex) http://framework-v404.php.local/  https://framework-v404.php.com/
+        $this->baseURL = (is_https() === TRUE ? 'https://' : 'http://') . $_SERVER['SERVER_NAME'] . '/';
+    }
 }
