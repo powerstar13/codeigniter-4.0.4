@@ -44,6 +44,16 @@ $routes->group('study', ['namespace' => 'Modules\Study\Controllers'], function($
         $routes->get('/', 'Ex02UserHelperController::index');
         $routes->get('debugTest', 'Ex02UserHelperController::debugTest');
     });
+
+    $routes->group('ex03', function($routes) {
+        $routes->get('find1', 'Ex03ArrayHelperController::find1');
+        $routes->get('find2', 'Ex03ArrayHelperController::find2');
+        $routes->get('random', 'Ex03ArrayHelperController::random');
+    });
+
+    $routes->group('ex04', function($routes) {
+        $routes->get('/', 'Ex04TextHelperController::index');
+    });
 });
 
 // We get a performance increase by specifying the default
