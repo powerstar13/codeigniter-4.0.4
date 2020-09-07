@@ -1,5 +1,6 @@
-<?php namespace App\Controllers;
-defined('BASEPATH') OR exit('No direct script access allowed');
+<?php namespace Modules\Study\Controllers;
+
+use App\Controllers\BaseController;
 
 /**
  * 컨틀롤러 클래스는 CodeIgniter\Controller 를 상속받아야 하며,

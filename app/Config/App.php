@@ -21,7 +21,7 @@ class App extends BaseConfig
 	| environments.
     |
     */
-    public $baseURL = 'http://localhost:80';
+    public $baseURL = '/';
 
 	/*
 	|--------------------------------------------------------------------------
@@ -268,7 +268,7 @@ class App extends BaseConfig
 
     /**
      * ========================================
-     * 수정해야할 설정값들을 생성자에서 처리
+     * 함수를 통해 수정해야할 설정값들은 생성자에서 처리
      * ========================================
      */
     public function __construct()
