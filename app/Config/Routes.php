@@ -32,6 +32,7 @@ $routes->setAutoRoute(false); // 자동 라우팅을 비활성화하여 정의�
 $routes->group('blog', ['namespace' => 'Modules\Blog\Controllers'], function($routes) {
     $routes->get('/', 'Blog::index');
 });
+
 $routes->group('study', ['namespace' => 'Modules\Study\Controllers'], function($routes) {
     $routes->get('/', 'HelloController::index');
 
@@ -87,6 +88,12 @@ $routes->group('study', ['namespace' => 'Modules\Study\Controllers'], function($
         $routes->get('error', 'Ex08ErrorHandlingController::error');
         $routes->get('notFound', 'Ex08ErrorHandlingController::notFound');
         $routes->get('log', 'Ex08ErrorHandlingController::log');
+    });
+});
+
+$routes->group('mvc', ['namespace' => 'Modules\Pattern\Controllers'], function($routes) {
+    $routes->group('useView', function($routes) {
+        $routes->get('/', 'Ex01UseView::index');
     });
 });
 

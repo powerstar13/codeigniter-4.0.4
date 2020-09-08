@@ -3,7 +3,7 @@
 use App\Controllers\BaseController;
 
 /**
- * CI는 기본적으로 PHP의 모든 에어를 표시하지만, 개발이 완료된 후 이러한 에러 표시를 숨기고, 개발자가 정의한 에러 페이지를 표시하고자 할 경우에 사용하는 함수들이 제공된다.
+ * CI는 기본적으로 PHP의 모든 에러를 표시하지만, 개발이 완료된 후 이러한 에러 표시를 숨기고, 개발자가 정의한 에러 페이지를 표시하고자 할 경우에 사용하는 함수들이 제공된다.
  */
 class Ex08ErrorHandlingController extends BaseController
 {
