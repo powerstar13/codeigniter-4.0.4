@@ -94,6 +94,7 @@ $routes->group('study', ['namespace' => 'Modules\Study\Controllers'], function($
 $routes->group('mvc', ['namespace' => 'Modules\Pattern\Controllers'], function($routes) {
     $routes->group('useView', function($routes) {
         $routes->get('/', 'Ex01UseView::index');
+        $routes->get('setArray', 'Ex01UseView::setArray');
     });
 });
 

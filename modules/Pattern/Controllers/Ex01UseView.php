@@ -18,4 +18,24 @@ class Ex01UseView extends BaseController
         // 지정된 View 파일이 없을 경우 404 에러가 표시된다.
         return view('Modules\Pattern\Views\Ex01UseView\index');
     }
+
+    /**
+     * View에게 데이터를 전달하는 패턴
+     *
+     * - 연관 배열을 구성하여 View에게 전달한다.
+     * - View에서는 연관배열의 Key를 변수로 인식한다.
+     */
+    public function setArray()
+    {
+        // 연관배열로 HTML 코드에 전달할 데이터 구성하기
+        $data = array(
+            'name' => '코드이그나이터',
+            'language' => 'PHP',
+            'level' => '중급'
+        );
+
+        // 로드할 View와 전달할 데이터 설정 (데이터는 생략 가능함)
+        return view('Modules\Pattern\Views\Ex01UseView\setArray', $data);
+    }
+
 }
