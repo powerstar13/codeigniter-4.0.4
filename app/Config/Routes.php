@@ -65,6 +65,16 @@ $routes->group('study', ['namespace' => 'Modules\Study\Controllers'], function($
         $routes->get('dirFileInfo', 'Ex05FilesystemHelperController::dirFileInfo');
         $routes->get('delete', 'Ex05FilesystemHelperController::delete');
     });
+
+    $routes->group('ex06', function($routes) {
+        $routes->get('getUrl', 'Ex06UrlHelperController::getUrl');
+        $routes->get('link', 'Ex06UrlHelperController::link');
+        $routes->get('popup', 'Ex06UrlHelperController::popup');
+        $routes->get('redirect', 'Ex06UrlHelperController::redirect');
+        $routes->get('mail', 'Ex06UrlHelperController::mail');
+        $routes->get('autoLink', 'Ex06UrlHelperController::autoLink');
+        $routes->get('etc', 'Ex06UrlHelperController::etc');
+    });
 });
 
 // We get a performance increase by specifying the default
