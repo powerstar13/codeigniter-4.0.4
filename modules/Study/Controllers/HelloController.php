@@ -17,4 +17,8 @@ class HelloController extends BaseController
     }
 
     // 이 위치에 각 페이지를 구성하는 메소드가 추가된다.
+    public function index()
+    {
+        return view('welcome_message');
+    }
 }

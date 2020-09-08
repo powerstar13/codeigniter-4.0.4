@@ -33,6 +33,8 @@ $routes->group('blog', ['namespace' => 'Modules\Blog\Controllers'], function($ro
     $routes->get('/', 'Blog::index');
 });
 $routes->group('study', ['namespace' => 'Modules\Study\Controllers'], function($routes) {
+    $routes->get('/', 'HelloController::index');
+
     $routes->group('ex01', function($routes) {
         $routes->get('showItem', 'Ex01ConfigController::showItem');
         $routes->get('showAll', 'Ex01ConfigController::showAll');
@@ -74,6 +76,17 @@ $routes->group('study', ['namespace' => 'Modules\Study\Controllers'], function($
         $routes->get('mail', 'Ex06UrlHelperController::mail');
         $routes->get('autoLink', 'Ex06UrlHelperController::autoLink');
         $routes->get('etc', 'Ex06UrlHelperController::etc');
+    });
+
+    $routes->group('ex07', function($routes) {
+        $routes->get('vars', 'Ex07GlobalController::vars');
+        $routes->get('func', 'Ex07GlobalController::func');
+    });
+
+    $routes->group('ex08', function($routes) {
+        $routes->get('error', 'Ex08ErrorHandlingController::error');
+        $routes->get('notFound', 'Ex08ErrorHandlingController::notFound');
+        $routes->get('log', 'Ex08ErrorHandlingController::log');
     });
 });
 
