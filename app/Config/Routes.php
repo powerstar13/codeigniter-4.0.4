@@ -56,6 +56,15 @@ $routes->group('study', ['namespace' => 'Modules\Study\Controllers'], function($
         $routes->get('limit', 'Ex04TextHelperController::limit');
         $routes->get('highlight', 'Ex04TextHelperController::highlight');
     });
+
+    $routes->group('ex05', function($routes) {
+        $routes->get('setRealpath', 'Ex05FilesystemHelperController::setRealpath');
+        $routes->get('directoryMap', 'Ex05FilesystemHelperController::directoryMap');
+        $routes->get('makeFile', 'Ex05FilesystemHelperController::makeFile');
+        $routes->get('filenames', 'Ex05FilesystemHelperController::filenames');
+        $routes->get('dirFileInfo', 'Ex05FilesystemHelperController::dirFileInfo');
+        $routes->get('delete', 'Ex05FilesystemHelperController::delete');
+    });
 });
 
 // We get a performance increase by specifying the default
