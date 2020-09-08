@@ -53,6 +53,8 @@ $routes->group('study', ['namespace' => 'Modules\Study\Controllers'], function($
 
     $routes->group('ex04', function($routes) {
         $routes->get('/', 'Ex04TextHelperController::index');
+        $routes->get('limit', 'Ex04TextHelperController::limit');
+        $routes->get('highlight', 'Ex04TextHelperController::highlight');
     });
 });
 
