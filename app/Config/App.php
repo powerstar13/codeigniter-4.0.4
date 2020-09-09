@@ -254,11 +254,9 @@ class App extends BaseConfig
 	|--------------------------------------------------------------------------
 	| Content Security Policy
 	|--------------------------------------------------------------------------
-	| Enables the Response's Content Secure Policy to restrict the sources that
-	| can be used for images, scripts, CSS files, audio, video, etc. If enabled,
-	| the Response object will populate default values for the policy from the
-	| ContentSecurityPolicy.php file. Controllers can always add to those
-	| restrictions at run time.
+    | 응답의 콘텐츠 보안 정책을 사용하여 이미지, 스크립트, CSS 파일, 오디오, 비디오 등에 사용할 수 있는 소스를 제한합니다.
+    | 이 옵션을 사용하면 응답 개체는 ContentSecurityPolicy.php 파일에서 정책의 기본 값을 채웁니다.
+    | 컨트롤러는 항상 런타임에 이러한 제한을 추가할 수 있다.
 	|
 	| For a better understanding of CSP, see these documents:
 	|   - http://www.html5rocks.com/en/tutorials/security/content-security-policy/
