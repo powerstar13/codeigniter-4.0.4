@@ -75,8 +75,9 @@ class App extends BaseConfig
 	|
 	| If false, no automatic detection will be performed.
 	|
-	*/
-	public $negotiateLocale = false;
+    */
+    // 이 기능이 활성화되면 시스템은 `$supportLocales`에 정의한 로케일 배열을 기반으로 올바른 언어를 자동으로 협상한다.
+	public $negotiateLocale = true; // Request 클래스에 로케일을 협상하고 싶다면 `true`
 
 	/*
 	|--------------------------------------------------------------------------
@@ -88,7 +89,7 @@ class App extends BaseConfig
 	| found, the first locale will be used.
 	|
 	*/
-	public $supportedLocales = ['ko', 'en'];
+	public $supportedLocales = ['ko', 'en']; // 지원하는 언어와 요청한 언어가 일치하지 않으면, 첫 번째 항목이 사용된다.
 
 	/*
 	|--------------------------------------------------------------------------
