@@ -95,6 +95,11 @@ $routes->group('mvc', ['namespace' => 'Modules\Pattern\Controllers'], function($
     $routes->group('useView', function($routes) {
         $routes->get('/', 'Ex01UseView::index');
         $routes->get('setArray', 'Ex01UseView::setArray');
+        $routes->get('library', 'Ex02UserLibrary::library');
+    });
+
+    $routes->group('userLib', function($routes) {
+        $routes->get('/', 'Ex02UserLibrary::index');
     });
 });
 
