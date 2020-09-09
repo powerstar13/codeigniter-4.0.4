@@ -106,6 +106,7 @@ $routes->get('/', 'Home::index'); // 이 지시문은 지정되지 않은 요청
 $routes->get('layout', 'Layout::index');
 $routes->get('layout/section', 'Layout::section');
 $routes->get('user/save', 'User::save');
+$routes->get('user/createUser', 'User::createUser');
 $routes->match(['get', 'post'], 'news/create', 'News::create');
 $routes->get('news/(:segment)', 'News::view/$1');
 $routes->get('news', 'News::index');
