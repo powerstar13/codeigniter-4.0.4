@@ -24,6 +24,8 @@ class Services extends CoreServices
 	//        return new \CodeIgniter\Example();
     //    }
 
+    //------------------------------------------------------------------
+
     public static function helloworld($getShared = true)
     {
         if ($getShared)
@@ -33,4 +35,18 @@ class Services extends CoreServices
 
         return new \Modules\Pattern\Libraries\HelloWorld();
     }
+
+    //------------------------------------------------------------------
+
+    public static function emailLib($getShared = true)
+    {
+        if ($getShared)
+        {
+            return static::getSharedInstance('emailLib');
+        }
+
+        return new \Modules\Pattern\Libraries\EmailLib();
+    }
+
+    //------------------------------------------------------------------
 }

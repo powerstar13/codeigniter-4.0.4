@@ -105,6 +105,10 @@ $routes->group('mvc', ['namespace' => 'Modules\Pattern\Controllers'], function($
     $routes->group('encrypt', function($routes) {
         $routes->get('/', 'Ex03Encryption::index');
     });
+
+    $routes->group('email', function($routes) {
+        $routes->get('joinMail', 'Ex04Email::joinMailSend');
+    });
 });
 
 // We get a performance increase by specifying the default
