@@ -101,6 +101,10 @@ $routes->group('mvc', ['namespace' => 'Modules\Pattern\Controllers'], function($
     $routes->group('userLib', function($routes) {
         $routes->get('/', 'Ex02UserLibrary::index');
     });
+
+    $routes->group('encrypt', function($routes) {
+        $routes->get('/', 'Ex03Encryption::index');
+    });
 });
 
 // We get a performance increase by specifying the default
