@@ -109,6 +109,10 @@ $routes->group('mvc', ['namespace' => 'Modules\Pattern\Controllers'], function($
     $routes->group('email', function($routes) {
         $routes->get('joinMail', 'Ex04Email::joinMailSend');
     });
+
+    $routes->group('get', function($routes) {
+        $routes->get('sample/(:segment)/(:segment)', 'Ex05Get::sample/$1/$2');
+    });
 });
 
 // We get a performance increase by specifying the default
@@ -125,8 +129,11 @@ $routes->get('news/(:segment)', 'News::view/$1');
 $routes->get('news', 'News::index');
 $routes->get('(:any)', 'Pages::view/$1');
 
-// CLI 전용 라우팅
-$routes->cli('tools/message/(:segment)', 'Tools::message/$1');
+// 환경 제한
+$routes->environment('development', function($routes) { // 개발자만 사용할 수 있는 도구
+    // CLI 전용 라우팅
+    $routes->cli('tools/message/(:segment)', 'Tools::message/$1');
+});
 
 
 /**
