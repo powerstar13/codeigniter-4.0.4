@@ -134,11 +134,52 @@ class App extends BaseConfig
 	|
 	| 'sessionDriver'
 	|
-	|	The storage driver to use: files, database, redis, memcached
-	|       - CodeIgniter\Session\Handlers\FileHandler
-	|       - CodeIgniter\Session\Handlers\DatabaseHandler
-	|       - CodeIgniter\Session\Handlers\MemcachedHandler
-	|       - CodeIgniter\Session\Handlers\RedisHandler
+    |	세션 라이브러리는 다음 4가지개의 사용할 수 있는 핸들러 또는 스토리지 엔진을 제공합니다.
+    |       - CodeIgniter\Session\Handlers\FileHandler
+    |           : 가장 안전한 선택이며, 모든 곳에서 작동할 것으로 예상하기 때문에 세션이 초기화 될 때 기본적으로 사용된다.
+    |
+    |       - CodeIgniter\Session\Handlers\DatabaseHandler
+    |           : `MySQL` 또는 `PostgreSQL`과 같은 관계형 데이터베이스를 사용하여 세션을 저장한다.
+    |               - 이는 개발자가 어플리케이션 내에서 세션 데이터에 쉽게 액세스할 수 있기 때문에, 많은 사용자에게 인기있는 선택이다.
+    |               - 영구 연결(persistent connection)을 사용할 수 없다.
+    |               - 세션 테이블을 만든 다음 `$sessionSavePath`의 값으로 설정해야 한다.
+    |                   - ex) 테이블 이름이 `ci_sessions`를 사용하려면
+    |                       - pulbic $sessionSavePath = 'ci_sessions';
+    |                   - MySQL 테이블 생성
+    |                       CREATE TABLE IF NOT EXISTS `ci_sessions` (
+    |                           `id` varchar(128) NOT NULL,
+    |                           `ip_address` varchar(45) NOT NULL,
+    |                           `timestamp` int(10) unsigned DEFAULT 0 NOT NULL,
+    |                           `data` blob NOT NULL,
+    |                           KEY `ci_sessions_timestamp` (`timestamp`)
+    |                       );
+    |                   - 또한 `$sessionMatchIP` 설정에 따라 기본 키를 추가해야 한다.
+    |                       - When sessionMatchIP = TRUE
+    |                       ALTER TABLE ci_sessions ADD PRIMARY KEY (id, ip_address);
+    |
+    |                       - When sessionMatchIP = FALSE
+    |                       ALTER TABLE ci_sessions ADD PRIMARY KEY (id);
+    |
+    |                       - To drop a previously created primary key (use when changing the setting)
+    |                       ALTER TABLE ci_sessions DROP PRIMARY KEY;
+    |
+    |       - CodeIgniter\Session\Handlers\MemcachedHandler
+    |           - `Memcached`의 잠금 메커니즘에 직접 접근할 수 없으므로, 이 드라이버의 잠금은 최대 300초 동안 유지되는 별도의 값으로 에뮬레이션 된다.
+    |           - PHP의 `Memcached` 확장이 PECL과 일부 Linux를 통해 배포되기 때문에 가용성을 제외하고 모든면에서 `RedisHandler` 드라이버와 매우 유사하다.
+    |           - 보너스 팁 : 콜론으로 구성된 세 번째(`:weight`) 값으로 옵션 `weight` 매개 변수를 사용하는 다중 서버 구성도 지원되지만, 신뢰할 수 있는지 테스트하지 않았다는 점에 유의해야 한다.
+    |               - 서비스의 여러 경로를 쉼표(,)로 구분하여 작성한다.
+    |               - public $sessionSavePath = 'localhost:8080:5,127.0.0.1:8080:1';
+    |
+    |       - CodeIgniter\Session\Handlers\RedisHandler
+    |           - `Redis`의 잠금 메커니즘에 직접 접근할 수 없으므로, 이 드라이버의 잠금은 최대 300초 동안 유지되는 별도의 값으로 에뮬레이션 된다.
+    |           - 고성능으로 인해 캐싱에 일반적으로 사용되는 스토리지 엔진이다.
+    |           - 단점 : 관계형 데이터베이스만큼 편재적이지 않으며, 시스템에 `phppredis` PHP 확장이 설치되어 있어야 하며, PHP 번들로 제공되지 않는다.
+    |           - `$sessionSavePath` 설정을 통해 세션의 저장 위치를 구성한다.
+    |               - 대부분의 경우, 간단한 `host:port` 쌍만 있어도 충분하다.
+    |               - public $sessionPath = 'tcp://localhost:6379';
+    |
+    |       - CodeIgniter\Session\Handlers\ArrayHandler
+    |           : `ArrayHandler`는 테스트할 때 사용되며, PHP 배열에 모든 세션 데이터를 저장하여 데이터가 테스트 이후 유지되는 것을 방지한다.
 	|
 	| 'sessionCookieName'
 	|
@@ -182,13 +223,16 @@ class App extends BaseConfig
 	| except for 'cookie_prefix' and 'cookie_httponly', which are ignored here.
 	|
 	*/
-	public $sessionDriver            = 'CodeIgniter\Session\Handlers\FileHandler';
-	public $sessionCookieName        = 'ci_session';
-	public $sessionExpiration        = 7200;
-	public $sessionSavePath          = WRITEPATH . 'session';
-	public $sessionMatchIP           = false;
-	public $sessionTimeToUpdate      = 300;
-	public $sessionRegenerateDestroy = false;
+	public $sessionDriver            = 'CodeIgniter\Session\Handlers\DatabaseHandler'; // 세션 저장 방식 --> 원본 : FileHandler
+	public $sessionCookieName        = 'ci_session'; // 세션키값을 저장할 쿠키 이름
+    public $sessionExpiration        = 7200 * 12; // 세션 유효시간. 7200 (2시간) * 12 --> 24시간이 되며, 브러우저 닫힘과 동시에 세션 종료하려면 `0`
+    // FileHandler --> 세션 저장 경로 (절대경로로 설정) --> 원본 : WRITEPATH . 'session'
+    // DatabaseHandler --> 세션이 저장될 DB 테이블이름
+	public $sessionSavePath          = 'ci_sessions';
+	public $sessionMatchIP           = false; // 아이피 고정 옵션 --> IP가 유동적인 기기의 경우를 위해 `FALSE` 권장
+	public $sessionTimeToUpdate      = 300; // 세션 갱신 시간
+    public $sessionRegenerateDestroy = true; // 세션 재 생성 시, 기존 값 삭제 여부
+    // public $sessionDBGroup = 'tests'; // 사용할 데이터베이스 그룹 이름을 지정할 수 있다.
 
 	/*
 	|--------------------------------------------------------------------------

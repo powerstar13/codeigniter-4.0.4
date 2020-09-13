@@ -118,6 +118,11 @@ $routes->group('mvc', ['namespace' => 'Modules\Pattern\Controllers'], function($
         $routes->get('/', 'Ex06Cookie::index');
         $routes->post('result', 'Ex06Cookie::result');
     });
+
+    $routes->group('session', function($routes) {
+        $routes->get('/', 'Ex07Session::index');
+        $routes->post('result', 'Ex07Session::result');
+    });
 });
 
 // We get a performance increase by specifying the default
