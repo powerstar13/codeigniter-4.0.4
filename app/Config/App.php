@@ -28,12 +28,12 @@ class App extends BaseConfig
 	| Index File
 	|--------------------------------------------------------------------------
 	|
-	| Typically this will be your index.php file, unless you've renamed it to
-	| something else. If you are using mod_rewrite to remove the page set this
-	| variable so that it is blank.
-	|
+    | 일반적으로 이것은 다른 것으로 이름을 바꾸지 않는 한 당신의 `index.php` 파일이 될 것이다.
+    | mod_rewrite를 사용하여 페이지를 제거하려면 이 변수를 공백으로 설정하십시오.
+    |
+	| - `.htaccess` 통해서 index.php 경로에 제외되도록 처리함을 참고
 	*/
-	public $indexPage = 'index.php';
+	public $indexPage = ''; // 원본 : index.php
 
 	/*
 	|--------------------------------------------------------------------------
@@ -192,7 +192,10 @@ class App extends BaseConfig
 
 	/*
 	|--------------------------------------------------------------------------
-	| Cookie Related Variables
+    | Cookie Related Variables
+    | 쿠키 저장에 필요한 정보를 설정한다.
+    |
+    | - 도메인, 쿠키가 저장될 폴더 위치 등의 정보는 하나의 사이트 안에서 대부분 일괄된 값을 사용하기 때문에, CI는 이러한 정보를 설정파일을 통해 전역적으로 관리할 수 있게 해준다.
 	|--------------------------------------------------------------------------
 	|
 	| 'cookiePrefix'   = Set a cookie name prefix if you need to avoid collisions
@@ -203,11 +206,17 @@ class App extends BaseConfig
 	|
 	| Note: These settings (with the exception of 'cookie_prefix' and
 	|       'cookie_httponly') will also affect sessions.
-	|
-	*/
-	public $cookiePrefix   = '';
-	public $cookieDomain   = '';
-	public $cookiePath     = '/';
+    |
+    */
+    // 모든 쿠키변수가 저장될 때, 이름 앞에 자동으로 붙을 단어
+    public $cookiePrefix   = '';
+    // 쿠키가 인식될 도메인을 명시 (공백인 경우, 현재 URL의 도메인)
+    // ex) 도메인이 `project.com` 인 경우, `.project.com`으로 지정 (앞에 점(.) 주의)
+    public $cookieDomain   = '';
+    // 쿠키가 인식될 URL상의 경로.
+    // "/"로 지정할 경우 사이트 전역에서 인식 가능
+    public $cookiePath     = '/';
+    // 보안설정 --> 기본값 유지
 	public $cookieSecure   = false;
 	public $cookieHTTPOnly = false;
 
@@ -272,8 +281,37 @@ class App extends BaseConfig
      */
     public function __construct()
     {
-        // 사이트 기본 주소 설정 --> 현재 접속중인 페이지의 프로토콜을 판별하여 '동적'으로 설정한다.
-        // ex) http://framework-v404.php.local/  https://framework-v404.php.com/
+        /**
+         * ================================
+         * 사이트 기본 주소 설정
+         *
+         * - 현재 접속중인 페이지의 프로토콜을 판별하여 '동적'으로 설정한다.
+         * ex) http://framework-v404.php.local/  https://framework-v404.php.com/
+         * ================================
+         */
         $this->baseURL = (is_https() === TRUE ? 'https://' : 'http://') . $_SERVER['SERVER_NAME'] . '/';
+
+        /**
+         * ===========================================
+         * 정규표현식을 사용하여 쿠키 설정 개선
+         *
+         * - 접속된 도메인에서 서브 도메인을 제외한 메인 도메인만을 자동으로 추출하기 위한 정규표현식의 정의
+         *     - `project.com`과 `www.project.com`, `blog.project.com`등을 구분하지 않고, `project.com`만 취득할 수 있다.
+         * ===========================================
+         */
+        // 현재 서버 도메인
+        $domain = strtolower(trim($_SERVER['SERVER_NAME']));
+        // 서브도메인을 제외한 기본도메인만 추출하기 위한 정규표현식
+        // ex) `blog.project.com` --> `project.com`
+        $urlRegex = '/^(?:(?:[a-z]+):\/\/)?((?:[a-z\d\-]{2,}\.)+[a-z]{2,})(?::\d{1,5})?(?:\/[^\?]*)?(?:\?.+)?$/i';
+        $domainRegex = '/([a-z\d\-]+(?:\.(?:asia|info|name|mobi|com|net|org|biz|tel|xxx|kr|co|so|me|eu|cc|or|pe|ne|re|tv|jp|tw|market|local)){1,2})(?::\d{1,5})?(?:\/[^\?]*)?(?:\?.+)?$/i';
+
+        // if (preg_match($urlRegex, $domain)) { // 정규표현식에 부합될 경우
+        //     preg_match($domainRegex, $domain, $matches); // 서브 도메인을 제외한다.
+        //     $domain = "." . (empty($matches[1]) ? $domain : $matches[1]); // 취득한 값 앞에 점을 붙인다.
+        // }
+
+        // 정규표현식을 통해 도메인이 일관되게 설정됟록 구성하면, 사용자가 `www.project.com`, `project.com` 어느쪽으로 접근하더라도, 값이 유실되지 않고 지속될 수 있다.
+        $this->cookieDomain = $domain; // 취득한 도메인을 환경설정에 적용
     }
 }

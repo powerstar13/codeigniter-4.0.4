@@ -53,10 +53,11 @@ if ( ! function_exists('p'))
 	 * 문자열을 escape 처리 후 출력하기
 	 *
 	 * @param mixed $data : echo 가능한 문자열 또는 숫자
+     * @param string $context : 사용할 컨텍스트 (html, js, css, url, attr, raw, null)
 	 */
-	function p($data)
+	function p($data, string $context = 'html')
 	{
-		echo esc($data);
+		echo esc($data, $context);
 	}
 }
 

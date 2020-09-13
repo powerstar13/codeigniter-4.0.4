@@ -113,6 +113,11 @@ $routes->group('mvc', ['namespace' => 'Modules\Pattern\Controllers'], function($
     $routes->group('get', function($routes) {
         $routes->get('sample/(:segment)/(:segment)', 'Ex05Get::sample/$1/$2');
     });
+
+    $routes->group('cookie', function($routes) {
+        $routes->get('/', 'Ex06Cookie::index');
+        $routes->post('result', 'Ex06Cookie::result');
+    });
 });
 
 // We get a performance increase by specifying the default

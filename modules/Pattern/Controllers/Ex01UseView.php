@@ -16,7 +16,7 @@ class Ex01UseView extends BaseController
     {
         // 클래스 네임스페이스를 사용하여 뷰를 로드할 수 있다.
         // 지정된 View 파일이 없을 경우 404 에러가 표시된다.
-        return view('Modules\Pattern\Views\Ex01UseView\index');
+        return view('Modules\Pattern\Views\Ex01\index');
     }
 
     /**
@@ -35,7 +35,7 @@ class Ex01UseView extends BaseController
         );
 
         // 로드할 View와 전달할 데이터 설정 (데이터는 생략 가능함)
-        return view('Modules\Pattern\Views\Ex01UseView\setArray', $data);
+        return view('Modules\Pattern\Views\Ex01\setArray', $data);
     }
 
 }
