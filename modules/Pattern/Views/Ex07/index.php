@@ -10,5 +10,14 @@
         <input type="text" class="form-control" name="username" id="username" placeholder="Username" />
     </div>
 
+    <select name="sessionType" id="sessionType" class="form-control">
+        <option value="">Session Type</option>
+        <option value="default">일반</option>
+        <option value="flash">Flash data</option>
+        <option value="keep">Keep Flash data</option>
+        <option value="temp">Temp data</option>
+    </select>
+
+
     <button type="submit" class="btn btn-primary">세션저장</button>
 </form>
