@@ -1,4 +1,4 @@
-<?php namespace Modules\Study\Config;
+<?php namespace Modules\Pattern\Config;
 
 use CodeIgniter\Config\BaseConfig;
 
@@ -28,7 +28,6 @@ class Upload extends BaseConfig
 
     public function __construct()
     {
-        $this->viewPath = 'uploads/' . date('Ymd') . '/';
-        $this->uploadPath = FCPATH . "/{$this->viewPath}";
+        $this->uploadPath = WRITEPATH . 'uploads/' . date('Ymd') . '/';
     }
 }

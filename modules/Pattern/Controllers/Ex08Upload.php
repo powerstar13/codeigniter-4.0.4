@@ -14,7 +14,6 @@ class Ex08Upload extends BaseController
 
         // 커스텀 환경설정 파일 읽기 (경로를 포함한 파일명을 파라미터로 설정)
         $this->uploadConfig = (array) config('Modules\Pattern\Config\Upload');
-        helper('html');
     }
 
     public function index()
@@ -45,16 +44,10 @@ class Ex08Upload extends BaseController
         /**
          * (2) 업로드 수행 및 결과 처리
          */
-        $newName = $file->getRandomName();
-        $path = $file->move($uploadPath, $newName);
+        $path = $file->store();
 
         if ($path) {
-            $imageProperties = [
-                'src'    => base_url($this->uploadConfig['viewPath'] . $newName),
-                'width'  => '300',
-                'title'  => '업로드된 이미지',
-            ];
-            echo img($imageProperties);
+            debug($path);
         } else {
             debug('업로드 실패...', 'File store');
         }

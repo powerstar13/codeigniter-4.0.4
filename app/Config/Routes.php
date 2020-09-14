@@ -128,6 +128,10 @@ $routes->group('mvc', ['namespace' => 'Modules\Pattern\Controllers'], function($
         $routes->get('/', 'Ex08Upload::index');
         $routes->post('result', 'Ex08Upload::result');
     });
+
+    $routes->group('thumb', function($routes) {
+        $routes->get('/', 'Ex09Thumbnail::index');
+    });
 });
 
 // We get a performance increase by specifying the default
