@@ -123,6 +123,11 @@ $routes->group('mvc', ['namespace' => 'Modules\Pattern\Controllers'], function($
         $routes->get('/', 'Ex07Session::index');
         $routes->post('result', 'Ex07Session::result');
     });
+
+    $routes->group('upload', function($routes) {
+        $routes->get('/', 'Ex08Upload::index');
+        $routes->post('result', 'Ex08Upload::result');
+    });
 });
 
 // We get a performance increase by specifying the default
