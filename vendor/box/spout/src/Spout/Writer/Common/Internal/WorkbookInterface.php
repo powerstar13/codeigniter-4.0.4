@@ -60,7 +60,7 @@ interface WorkbookInterface
      * @throws \Box\Spout\Common\Exception\IOException If trying to create a new sheet and unable to open the sheet for writing
      * @throws \Box\Spout\Writer\Exception\WriterException If unable to write data
      */
-    public function addRowToCurrentWorksheet($dataRow, $style);
+    public function addRowToCurrentWorksheet($dataRow, $style, $custom);
 
     /**
      * Closes the workbook and all its associated sheets.

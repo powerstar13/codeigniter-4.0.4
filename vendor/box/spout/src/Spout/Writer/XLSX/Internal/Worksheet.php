@@ -36,6 +36,8 @@ EOD;
     /** @var string Path to the XML file that will contain the sheet data */
     protected $worksheetFilePath;
 
+    protected $tempWorksheetFilePath;
+
     /** @var \Box\Spout\Writer\XLSX\Helper\SharedStringsHelper Helper to write shared strings */
     protected $sharedStringsHelper;
 
@@ -57,6 +59,15 @@ EOD;
     /** @var int Index of the last written row */
     protected $lastWrittenRowIndex = 0;
 
+    /** @var bool For Function mergeCells */
+    protected $mergeDo = false;
+    /** @var array For Function mergeCells */
+    protected $mergeCells = array();
+
+    protected $colDo = false;
+
+    protected $colWidths = array();
+
     /**
      * @param \Box\Spout\Writer\Common\Sheet $externalSheet The associated "external" sheet
      * @param string $worksheetFilesFolder Temporary folder where the files to create the XLSX will be stored
@@ -77,6 +88,7 @@ EOD;
         $this->stringHelper = new StringHelper();
 
         $this->worksheetFilePath = $worksheetFilesFolder . '/' . strtolower($this->externalSheet->getName()) . '.xml';
+        $this->tempWorksheetFilePath = $worksheetFilesFolder . '/tmp_' . strtolower($this->externalSheet->getName()) . '.xml';
         $this->startSheet();
     }
 
@@ -92,6 +104,7 @@ EOD;
         $this->throwIfSheetFilePointerIsNotAvailable();
 
         fwrite($this->sheetFilePointer, self::SHEET_XML_FILE_HEADER);
+
         fwrite($this->sheetFilePointer, '<sheetData>');
     }
 
@@ -143,10 +156,10 @@ EOD;
      * @throws \Box\Spout\Common\Exception\IOException If the data cannot be written
      * @throws \Box\Spout\Common\Exception\InvalidArgumentException If a cell value's type is not supported
      */
-    public function addRow($dataRow, $style)
+    public function addRow($dataRow, $style, $custom)
     {
         if (!$this->isEmptyRow($dataRow)) {
-            $this->addNonEmptyRow($dataRow, $style);
+          $this->addNonEmptyRow($dataRow, $style, $custom);
         }
 
         $this->lastWrittenRowIndex++;
@@ -176,13 +189,23 @@ EOD;
      * @throws \Box\Spout\Common\Exception\IOException If the data cannot be written
      * @throws \Box\Spout\Common\Exception\InvalidArgumentException If a cell value's type is not supported
      */
-    protected function addNonEmptyRow($dataRow, $style)
+    protected function addNonEmptyRow($dataRow, $style, $custom)
     {
         $cellNumber = 0;
         $rowIndex = $this->lastWrittenRowIndex + 1;
         $numCells = count($dataRow);
-
-        $rowXML = '<row r="' . $rowIndex . '" spans="1:' . $numCells . '">';
+        $customAttr = array();
+        if (is_array($custom)) {
+            foreach ($custom as $key => $row) {
+                switch($key) {
+                    case 'height':
+                        $customAttr[] = 'ht="' . $row . '"';
+                        $customAttr[] = 'customHeight="1"';
+                        break;
+                }
+            }
+        }
+        $rowXML = '<row r="' . $rowIndex . '" spans="1:' . $numCells . '" ' . implode(' ', $customAttr) . '>';
 
         foreach($dataRow as $cellValue) {
             $rowXML .= $this->getCellXML($rowIndex, $cellNumber, $cellValue, $style->getId());
@@ -258,6 +281,39 @@ EOD;
     }
 
     /**
+     * cell | row --> Merge 기능
+     * @author 홍준성 <powerstar13@kai-i.com>
+     * @param string $sheetName : 시트명
+     * @param string $start : 시작 cell | row
+     * @param string $end : 종료 cell | row
+     */
+    public function mergeCells($sheetName = 'sheet1', $start = '', $end = '')
+    {
+        if($start !== '' && $end !== '') {
+            $this->mergeDo = true;
+            array_push($this->mergeCells,
+                array(
+                    $sheetName,
+                    '<mergeCell ref="' . $start . ':' . $end . '"/>'
+                )
+            );
+        }
+    }
+
+    public function colWidths($sheetName = 'sheet1', $min = '', $max = '', $width = '')
+    {
+        if(!empty($width)) {
+            $this->colDo = true;
+            array_push($this->colWidths,
+                array(
+                    $sheetName,
+                    '<col min="'.$min.'" max="'.$max.'" width="'.$width.'" customWidth="1"/>'
+                )
+            );
+        }
+    }
+
+    /**
      * Closes the worksheet
      *
      * @return void
@@ -269,7 +325,53 @@ EOD;
         }
 
         fwrite($this->sheetFilePointer, '</sheetData>');
+
+        /**
+         * cell | row --> Merge 기능
+         * @author 홍준성 <powerstar13@kai-i.com>
+         */
+        if($this->mergeDo) {
+            $mergeCell = '';
+            foreach($this->mergeCells AS $item) {
+                if ($this->externalSheet->getName() === $item[0]) {
+                    $mergeCell = $mergeCell . $item[1];
+                }
+            }
+            if($mergeCell !== '') {
+                fwrite($this->sheetFilePointer, '<mergeCells>' . $mergeCell . '</mergeCells>');
+            }
+        }
+
         fwrite($this->sheetFilePointer, '</worksheet>');
+
+        if ($this->colDo) {
+            $cosWidthCell = '';
+            foreach($this->colWidths AS $item) {
+                if ($this->externalSheet->getName() === $item[0]) {
+                    $cosWidthCell = $cosWidthCell . $item[1];
+                }
+            }
+            if($cosWidthCell !== '') {
+                // temp 에 복사
+                if(!copy($this->worksheetFilePath, $this->tempWorksheetFilePath)) {
+                  fwrite ($this->sheetFilePointer, '카피실패');
+                  exit;
+                }
+                // 현재까지의 진행 본 읽기
+                $fp = fopen($this->tempWorksheetFilePath, "r") or die("file open fail");
+
+                // 덮어쓸 경로 재 추가
+                $this->sheetFilePointer = fopen($this->worksheetFilePath, "w");
+
+                while(!feof($fp)){
+                    $line = fgets($fp);
+                    $line = str_replace('<sheetData>', '<cols>'.$cosWidthCell.'</cols><sheetData>', $line);
+                    fwrite ($this->sheetFilePointer, $line);
+                }
+                fclose($fp);
+                unlink($this->tempWorksheetFilePath);
+            }
+        }
         fclose($this->sheetFilePointer);
     }
 }

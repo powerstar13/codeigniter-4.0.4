@@ -92,7 +92,7 @@ class Writer extends AbstractWriter
      * @return void
      * @throws \Box\Spout\Common\Exception\IOException If unable to write data
      */
-    protected function addRowToWriter(array $dataRow, $style)
+    protected function addRowToWriter(array $dataRow, $style, $custom)
     {
         $wasWriteSuccessful = $this->globalFunctionsHelper->fputcsv($this->filePointer, $dataRow, $this->fieldDelimiter, $this->fieldEnclosure);
         if ($wasWriteSuccessful === false) {

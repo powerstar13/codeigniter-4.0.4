@@ -38,7 +38,7 @@ interface WriterInterface
      * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException If the writer has not been opened yet
      * @throws \Box\Spout\Common\Exception\IOException If unable to write data
      */
-    public function addRow(array $dataRow);
+    public function addRow(array $dataRow, array $custom = array());
 
     /**
      * Write given data to the output and apply the given style.
@@ -51,7 +51,7 @@ interface WriterInterface
      * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException If this function is called before opening the writer
      * @throws \Box\Spout\Common\Exception\IOException If unable to write data
      */
-    public function addRowWithStyle(array $dataRow, $style);
+    public function addRowWithStyle(array $dataRow, $style, array $custom = array());
 
     /**
      * Write given data to the output. New data will be appended to end of stream.
@@ -80,6 +80,20 @@ interface WriterInterface
      * @throws \Box\Spout\Common\Exception\IOException If unable to write data
      */
     public function addRowsWithStyle(array $dataRows, $style);
+
+    public function getCurrentSheet();
+    public function addNewSheetAndMakeItCurrent();
+
+    /**
+     * cell | row --> Merge 기능
+     * @author 홍준성 <powerstar13@kai-i.com>
+     * @param string $sheetName : 시트명
+     * @param string $start : 시작 cell | row
+     * @param string $end : 종료 cell | row
+     */
+    public function mergeCells($sheetName = 'sheet1', $start = '', $end = '');
+
+    public function colWidths($sheetName = 'sheet1', $min = '', $max = '', $width = '');
 
     /**
      * Closes the writer. This will close the streamer as well, preventing new data

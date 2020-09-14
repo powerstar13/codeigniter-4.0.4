@@ -146,7 +146,7 @@ abstract class AbstractWorkbook implements WorkbookInterface
      * @throws \Box\Spout\Common\Exception\IOException If trying to create a new sheet and unable to open the sheet for writing
      * @throws \Box\Spout\Writer\Exception\WriterException If unable to write data
      */
-    public function addRowToCurrentWorksheet($dataRow, $style)
+    public function addRowToCurrentWorksheet($dataRow, $style, $custom)
     {
         $currentWorksheet = $this->getCurrentWorksheet();
         $hasReachedMaxRows = $this->hasCurrentWorkseetReachedMaxRows();
@@ -160,14 +160,14 @@ abstract class AbstractWorkbook implements WorkbookInterface
 
                 $updatedStyle = $styleHelper->applyExtraStylesIfNeeded($style, $dataRow);
                 $registeredStyle = $styleHelper->registerStyle($updatedStyle);
-                $currentWorksheet->addRow($dataRow, $registeredStyle);
+                $currentWorksheet->addRow($dataRow, $registeredStyle, $custom);
             } else {
                 // otherwise, do nothing as the data won't be read anyways
             }
         } else {
             $updatedStyle = $styleHelper->applyExtraStylesIfNeeded($style, $dataRow);
             $registeredStyle = $styleHelper->registerStyle($updatedStyle);
-            $currentWorksheet->addRow($dataRow, $registeredStyle);
+            $currentWorksheet->addRow($dataRow, $registeredStyle, $custom);
         }
     }
 

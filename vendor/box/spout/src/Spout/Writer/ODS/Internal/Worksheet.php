@@ -132,7 +132,7 @@ class Worksheet implements WorksheetInterface
      * @throws \Box\Spout\Common\Exception\IOException If the data cannot be written
      * @throws \Box\Spout\Common\Exception\InvalidArgumentException If a cell value's type is not supported
      */
-    public function addRow($dataRow, $style)
+    public function addRow($dataRow, $style, $custom)
     {
         // $dataRow can be an associative array. We need to transform
         // it into a regular array, as we'll use the numeric indexes.

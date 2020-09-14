@@ -55,7 +55,7 @@ abstract class AbstractWriter implements WriterInterface
      * @param Style\Style $style Style to be applied to the written row
      * @return void
      */
-    abstract protected function addRowToWriter(array $dataRow, $style);
+    abstract protected function addRowToWriter(array $dataRow, $style, $custom);
 
     /**
      * Closes the streamer, preventing any additional writing.
@@ -203,13 +203,13 @@ abstract class AbstractWriter implements WriterInterface
      * @throws \Box\Spout\Common\Exception\IOException If unable to write data
      * @throws \Box\Spout\Common\Exception\SpoutException If anything else goes wrong while writing data
      */
-    public function addRow(array $dataRow)
+    public function addRow(array $dataRow, array $custom = array())
     {
         if ($this->isWriterOpened) {
             // empty $dataRow should not add an empty line
             if (!empty($dataRow)) {
                 try {
-                    $this->addRowToWriter($dataRow, $this->rowStyle);
+                    $this->addRowToWriter($dataRow, $this->rowStyle, $custom);
                 } catch (SpoutException $e) {
                     // if an exception occurs while writing data,
                     // close the writer and remove all files created so far.
@@ -238,14 +238,14 @@ abstract class AbstractWriter implements WriterInterface
      * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException If this function is called before opening the writer
      * @throws \Box\Spout\Common\Exception\IOException If unable to write data
      */
-    public function addRowWithStyle(array $dataRow, $style)
+    public function addRowWithStyle(array $dataRow, $style, array $custom = array())
     {
         if (!$style instanceof Style\Style) {
             throw new InvalidArgumentException('The "$style" argument must be a Style instance and cannot be NULL.');
         }
 
         $this->setRowStyle($style);
-        $this->addRow($dataRow);
+        $this->addRow($dataRow, $custom);
         $this->resetRowStyleToDefault();
 
         return $this;

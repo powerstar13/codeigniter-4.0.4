@@ -73,7 +73,7 @@ class Writer extends AbstractMultiSheetsWriter
      * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException If the book is not created yet
      * @throws \Box\Spout\Common\Exception\IOException If unable to write data
      */
-    protected function addRowToWriter(array $dataRow, $style)
+    protected function addRowToWriter(array $dataRow, $style, $custom)
     {
         $this->throwIfBookIsNotAvailable();
         $this->book->addRowToCurrentWorksheet($dataRow, $style);

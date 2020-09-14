@@ -29,7 +29,11 @@ interface WorksheetInterface
      * @throws \Box\Spout\Common\Exception\IOException If the data cannot be written
      * @throws \Box\Spout\Common\Exception\InvalidArgumentException If a cell value's type is not supported
      */
-    public function addRow($dataRow, $style);
+    public function addRow($dataRow, $style, $custom);
+
+    public function mergeCells($sheetName = 'sheet1', $start = '', $end = '');
+
+    public function colWidths($sheetName = 'sheet1', $min = '', $max = '', $width = '');
 
     /**
      * Closes the worksheet

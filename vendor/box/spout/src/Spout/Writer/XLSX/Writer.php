@@ -30,6 +30,8 @@ class Writer extends AbstractMultiSheetsWriter
     /** @var Internal\Workbook The workbook for the XLSX file */
     protected $book;
 
+    protected $columnwidths = array();
+
     /**
      * Sets a custom temporary folder for creating intermediate files/folders.
      * This must be set before opening the writer.
@@ -99,10 +101,10 @@ class Writer extends AbstractMultiSheetsWriter
      * @throws \Box\Spout\Writer\Exception\WriterNotOpenedException If the book is not created yet
      * @throws \Box\Spout\Common\Exception\IOException If unable to write data
      */
-    protected function addRowToWriter(array $dataRow, $style)
+    protected function addRowToWriter(array $dataRow, $style, $custom)
     {
         $this->throwIfBookIsNotAvailable();
-        $this->book->addRowToCurrentWorksheet($dataRow, $style);
+        $this->book->addRowToCurrentWorksheet($dataRow, $style, $custom);
     }
 
     /**
