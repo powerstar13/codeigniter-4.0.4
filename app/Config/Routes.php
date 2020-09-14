@@ -132,6 +132,10 @@ $routes->group('mvc', ['namespace' => 'Modules\Pattern\Controllers'], function($
     $routes->group('thumb', function($routes) {
         $routes->get('/', 'Ex09Thumbnail::index');
     });
+
+    $routes->group('UserAgent', function($routes) {
+        $routes->get('/', 'UserAgentController::index');
+    });
 });
 
 // We get a performance increase by specifying the default
