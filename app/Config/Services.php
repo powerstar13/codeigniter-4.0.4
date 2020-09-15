@@ -49,4 +49,16 @@ class Services extends CoreServices
     }
 
     //------------------------------------------------------------------
+
+    public static function excelLib($getShared = true)
+    {
+        if ($getShared)
+        {
+            return static::getSharedInstance('excelLib');
+        }
+
+        return new \Modules\Pattern\Libraries\ExcelLib();
+    }
+
+    //------------------------------------------------------------------
 }

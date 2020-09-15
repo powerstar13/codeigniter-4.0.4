@@ -136,6 +136,12 @@ $routes->group('mvc', ['namespace' => 'Modules\Pattern\Controllers'], function($
     $routes->group('UserAgent', function($routes) {
         $routes->get('/', 'UserAgentController::index');
     });
+
+    $routes->group('excel', function($routes) {
+        $routes->get('/', 'Ex10Excel::index');
+        $routes->post('read', 'Ex10Excel::read');
+        $routes->get('down', 'Ex10Excel::download');
+    });
 });
 
 // We get a performance increase by specifying the default
