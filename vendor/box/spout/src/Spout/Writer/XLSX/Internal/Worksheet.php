@@ -36,6 +36,11 @@ EOD;
     /** @var string Path to the XML file that will contain the sheet data */
     protected $worksheetFilePath;
 
+    /**
+     * =============================================
+     * 임시로 저장된 work Sheet 파일 경로
+     * =============================================
+     */
     protected $tempWorksheetFilePath;
 
     /** @var \Box\Spout\Writer\XLSX\Helper\SharedStringsHelper Helper to write shared strings */
@@ -59,13 +64,30 @@ EOD;
     /** @var int Index of the last written row */
     protected $lastWrittenRowIndex = 0;
 
-    /** @var bool For Function mergeCells */
+    /**
+     * ===============================================================================
+     * @var boolean $mergeDo : Merge 진행 여부 (For Function mergeCells)
+     * ===============================================================================
+     */
     protected $mergeDo = false;
-    /** @var array For Function mergeCells */
+    /**
+     * ==========================================================================
+     * @var array $mergeCells : Merge 처리할 `Cell`이 담긴 배열 (For Function mergeCells)
+     * ==========================================================================
+     */
     protected $mergeCells = array();
 
+    /**
+     * ===============================================================================
+     * @var boolean $colDo : 넓이 설정 진행 여부 (For Function colWidths)
+     * ===============================================================================
+     */
     protected $colDo = false;
-
+    /**
+     * ==========================================================================
+     * @var array $colWidths : 넓이 설정할 `Column`이 담 배열 (For Function colWidths)
+     * ==========================================================================
+     */
     protected $colWidths = array();
 
     /**
@@ -88,6 +110,9 @@ EOD;
         $this->stringHelper = new StringHelper();
 
         $this->worksheetFilePath = $worksheetFilesFolder . '/' . strtolower($this->externalSheet->getName()) . '.xml';
+        /**
+         * 임시로 저장될 worksheet(.xml) 파일 경로값 담기
+         */
         $this->tempWorksheetFilePath = $worksheetFilesFolder . '/tmp_' . strtolower($this->externalSheet->getName()) . '.xml';
         $this->startSheet();
     }
@@ -147,11 +172,16 @@ EOD;
     }
 
     /**
+     * ===================================================================================================
+     * Style을 포함한 Row 추가 시, 세 번째 매개 변수에 배열 $custom 전달하여 `height` 설정 가능
+     * ===================================================================================================
+     *
      * Adds data to the worksheet.
      *
      * @param array $dataRow Array containing data to be written. Cannot be empty.
      *          Example $dataRow = ['data1', 1234, null, '', 'data5'];
      * @param \Box\Spout\Writer\Style\Style $style Style to be applied to the row. NULL means use default style.
+     * @param array $custom : Key 값으로 'height' 명시하고 value 로 높이 지정
      * @return void
      * @throws \Box\Spout\Common\Exception\IOException If the data cannot be written
      * @throws \Box\Spout\Common\Exception\InvalidArgumentException If a cell value's type is not supported
@@ -159,7 +189,7 @@ EOD;
     public function addRow($dataRow, $style, $custom)
     {
         if (!$this->isEmptyRow($dataRow)) {
-          $this->addNonEmptyRow($dataRow, $style, $custom);
+            $this->addNonEmptyRow($dataRow, $style, $custom); // $custom 배열을 통해 높이($height) 값 전달
         }
 
         $this->lastWrittenRowIndex++;
@@ -180,11 +210,16 @@ EOD;
     }
 
     /**
+     * ===================================================================================================
+     * 비어있지 않은 Style을 포함한 Row 추가 시, 세 번째 매개 변수에 배열 $custom 전달하여 `height` 설정 가능
+     * ===================================================================================================
+     *
      * Adds non empty row to the worksheet.
      *
      * @param array $dataRow Array containing data to be written. Cannot be empty.
      *          Example $dataRow = ['data1', 1234, null, '', 'data5'];
      * @param \Box\Spout\Writer\Style\Style $style Style to be applied to the row. NULL means use default style.
+     * @param array $custom : Key 값으로 'height' 명시하고 value 로 높이 지정
      * @return void
      * @throws \Box\Spout\Common\Exception\IOException If the data cannot be written
      * @throws \Box\Spout\Common\Exception\InvalidArgumentException If a cell value's type is not supported
@@ -194,6 +229,7 @@ EOD;
         $cellNumber = 0;
         $rowIndex = $this->lastWrittenRowIndex + 1;
         $numCells = count($dataRow);
+         // $custom 배열을 통해 높이($height) 값 전달
         $customAttr = array();
         if (is_array($custom)) {
             foreach ($custom as $key => $row) {
@@ -281,11 +317,14 @@ EOD;
     }
 
     /**
+     * =================================================
      * cell | row --> Merge 기능
+     *
      * @author 홍준성 <powerstar13@kai-i.com>
      * @param string $sheetName : 시트명
      * @param string $start : 시작 cell | row
      * @param string $end : 종료 cell | row
+     * =================================================
      */
     public function mergeCells($sheetName = 'sheet1', $start = '', $end = '')
     {
@@ -300,6 +339,17 @@ EOD;
         }
     }
 
+    /**
+     * =================================
+     * Cell 너비 설정 기능
+     *
+     * @param string $sheetName : 적용할 Sheet 이름
+     * @param string $min : 적용 시작할 Cell (A1 --> 1)
+     * @param string $max : 적용 종료할 Cell (D1 --> 4)
+     * @param string $width : 적용할 Cell의 너비값
+     * @return void
+     * =================================
+     */
     public function colWidths($sheetName = 'sheet1', $min = '', $max = '', $width = '')
     {
         if(!empty($width)) {
@@ -327,8 +377,10 @@ EOD;
         fwrite($this->sheetFilePointer, '</sheetData>');
 
         /**
+         * ===================================================
          * cell | row --> Merge 기능
          * @author 홍준성 <powerstar13@kai-i.com>
+         * ===================================================
          */
         if($this->mergeDo) {
             $mergeCell = '';
@@ -344,6 +396,11 @@ EOD;
 
         fwrite($this->sheetFilePointer, '</worksheet>');
 
+        /**
+         * ===================================================
+         * Cell 너비 설정 기능
+         * ===================================================
+         */
         if ($this->colDo) {
             $cosWidthCell = '';
             foreach($this->colWidths AS $item) {
@@ -372,6 +429,7 @@ EOD;
                 unlink($this->tempWorksheetFilePath);
             }
         }
+
         fclose($this->sheetFilePointer);
     }
 }
