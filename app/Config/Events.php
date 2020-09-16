@@ -70,6 +70,9 @@ Events::on('post_controller_constructor', function() {
     $request = service('request');
     $agent = $request->getUserAgent();
     $router = service('router');
+    $session = service('session');
+    $response = service('response');
+    $loginAccessConfig = (array) config('Modules\Pattern\Config\LoginAccess');
 
     // 사용자 정보 (IP주소, 플랫폼, 브라우저(버전), 모바일 단말명)
     log_message('debug', sprintf('[client] %s / %s / %s(%s) / %s',
@@ -86,6 +89,36 @@ Events::on('post_controller_constructor', function() {
         $router->controllerName(),
         $router->methodName()
     ));
+
+    $uri = $_SERVER['REQUEST_URI']; // 현재 페이지의 URI를 가져온다.
+
+    $userInfo = $session->get('userInfo'); // 세션에서 데이터를 추출한다.
+    // 로그인 여부를 검사
+    if (empty($userInfo)) {
+        // 로그인 여부에 따라 현재 페이지의 접근성 여부를 확인
+        $onlyMember = $loginAccessConfig['onlyMember']; // 회원만 접근 가능한 페이지의 목록을 가져온다.
+
+        // 회원전용 페이지 목록과 현재 페이지의 URL을 비교하여 같은 값이 있는지 확인한다.
+        foreach ($onlyMember as $memberPage) {
+            if (strpos($uri, $memberPage) !== FALSE) {
+                return $response->redirect('/'); // 첫 페이지(로그인)로 강제 이동
+            }
+        }
+    } else {
+        // 접속 유저의 정보 로그로 기록
+        log_message('debug', sprintf('User Info (username = %s, email = %s)', $userInfo['username'], $userInfo['email']));
+
+        $onlyGuest = $loginAccessConfig['onlyGuest']; // 로그인 상태에서는 접근할 수 없는 페이지의 목록을 가져온다.
+
+        // 회원전용 페이지 목록과 현재 페이지의 URL을 비교하여 같은 값이 있는지 확인한다.
+        foreach ($onlyGuest as $guestPage) {
+            if (strpos($uri, $guestPage) !== FALSE) {
+                return $response->redirect('/study'); // 홈 페이지(메인)로 강제 이동
+            }
+        }
+    }
+    if ($_SERVER['REQUEST_URI'] !== '/') {
+    }
 });
 
 Events::on('post_system', function() {

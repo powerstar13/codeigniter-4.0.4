@@ -28,6 +28,8 @@ Class User extends BaseController
         );
         $result = $this->userLib->save($resource);
 
+        // TODO: User 정보가 Update 라면 세션을 갱신해야 한다.
+
         $data = array();
         if ($result['rt'] !== 200) {
             $data['errors'] = $result['errors'];
