@@ -61,4 +61,16 @@ class Services extends CoreServices
     }
 
     //------------------------------------------------------------------
+
+    public static function dbUtilLib($getShared = true)
+    {
+        if ($getShared)
+        {
+            return static::getSharedInstance('dbUtilLib');
+        }
+
+        return new \Modules\Pattern\Libraries\DBUtilLib();
+    }
+
+    //------------------------------------------------------------------
 }

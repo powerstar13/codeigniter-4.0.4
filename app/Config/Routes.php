@@ -142,6 +142,13 @@ $routes->group('mvc', ['namespace' => 'Modules\Pattern\Controllers'], function($
         $routes->post('read', 'Ex10Excel::read');
         $routes->get('down', 'Ex10Excel::download');
     });
+
+    $routes->group('db', function($routes) {
+        $routes->get('/', 'Ex11DBUtil::list');
+        $routes->get('opt', 'Ex11DBUtil::optimize');
+        $routes->get('table', 'Ex11DBUtil::tableUtil');
+        $routes->get('backup', 'Ex11DBUtil::backup');
+    });
 });
 
 // We get a performance increase by specifying the default
