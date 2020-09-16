@@ -146,6 +146,7 @@ class ExcelLib
      * @param boolean $fontBold : 글자 두껍게 사용 여부
      * @param integer $fontSize : 글자 크기
      * @param string $fontColor : 글자 색
+     * @param string $fontName : 글꼴
      * @param string $backgroundColor : 배경 색
      * @param string $borderDirection : 테두리 방향
      * @param string $borderColor : 테두리 색
@@ -159,6 +160,7 @@ class ExcelLib
         bool $fontBold = FALSE,
         int $fontSize = 15,
         string $fontColor = Color::BLACK,
+        string $fontName = '맑은 고딕',
         string $backgroundColor = Color::WHITE,
         string $borderDirection = 'all',
         string $borderColor = Color::BLACK,
@@ -178,6 +180,7 @@ class ExcelLib
 
         return $style->setFontSize($fontSize)
             ->setFontColor($fontColor)
+            ->setFontName($fontName)
             ->setBackgroundColor($backgroundColor)
             ->setCellHorizontalAlignment($cellHorizontalAlign)
             ->setCellVerticalAlignment($cellVerticalAlign)
@@ -198,14 +201,14 @@ class ExcelLib
          * --> 불필요한 항목 생략 가능
          */
         $headStyle = $this->style(
-            TRUE, 11, Color::BLACK, // font
+            TRUE, 11, Color::BLACK, '맑은 고딕', // font
             Color::YELLOW, // background
             'all', Color::BLACK, Border::WIDTH_THIN, Border::STYLE_SOLID, // border
             CellHorizontalAlignment::CENTER, CellVerticalAlignment::CENTER // align
         );
 
         $rowStyle = $this->style(
-            FALSE, 11, Color::BLACK, // font
+            FALSE, 11, Color::BLACK, '맑은 고딕', // font
             Color::WHITE, // background
             'all', Color::BLACK, Border::WIDTH_THIN, Border::STYLE_SOLID, // border
             CellHorizontalAlignment::CENTER, CellVerticalAlignment::CENTER // align
