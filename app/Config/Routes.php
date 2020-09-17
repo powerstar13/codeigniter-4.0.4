@@ -149,6 +149,10 @@ $routes->group('mvc', ['namespace' => 'Modules\Pattern\Controllers'], function($
         $routes->get('table', 'Ex11DBUtil::tableUtil');
         $routes->get('backup', 'Ex11DBUtil::backup');
     });
+
+    $routes->group('bbs', function($routes) {
+        $routes->get('(:any)', 'Bbs::$1');
+    });
 });
 
 // We get a performance increase by specifying the default
