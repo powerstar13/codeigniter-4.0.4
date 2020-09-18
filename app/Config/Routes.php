@@ -153,6 +153,16 @@ $routes->group('mvc', ['namespace' => 'Modules\Pattern\Controllers'], function($
     $routes->group('bbs', function($routes) {
         $routes->get('(:any)', 'Bbs::$1');
     });
+
+    $routes->group('pager', function($routes) {
+        $routes->get('/', 'Pagination::index');
+        $routes->get('multiple', 'Pagination::multiple');
+        $routes->get('myPager', 'Pagination::myPager');
+        $routes->get('segment/(:segment)', 'Pagination::segment/$1');
+        $routes->get('makeLinks', 'Pagination::makeLinks');
+        $routes->get('makeLinks/(:segment)', 'Pagination::makeLinksSegment/$1');
+        $routes->get('only', 'Pagination::only');
+    });
 });
 
 // We get a performance increase by specifying the default

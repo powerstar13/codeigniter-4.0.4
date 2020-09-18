@@ -73,4 +73,16 @@ class Services extends CoreServices
     }
 
     //------------------------------------------------------------------
+
+    public static function paginationLib($getShared = true)
+    {
+        if ($getShared)
+        {
+            return static::getSharedInstance('paginationLib');
+        }
+
+        return new \Modules\Pattern\Libraries\PaginationLib();
+    }
+
+    //------------------------------------------------------------------
 }
